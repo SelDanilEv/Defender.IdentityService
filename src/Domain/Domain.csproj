@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <RootNamespace>Defender.IdentityService.Domain</RootNamespace>
+        <AssemblyName>Defender.IdentityService.Domain</AssemblyName>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Remove="Common\**" />
+      <Compile Remove="Enums\**" />
+      <Compile Remove="Exceptions\**" />
+      <EmbeddedResource Remove="Common\**" />
+      <EmbeddedResource Remove="Enums\**" />
+      <EmbeddedResource Remove="Exceptions\**" />
+      <None Remove="Common\**" />
+      <None Remove="Enums\**" />
+      <None Remove="Exceptions\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Defender.Common" Version="1.1.14" />
+      <PackageReference Include="MediatR" Version="12.1.1" />
+      <PackageReference Include="MongoDB.Bson" Version="2.21.0" />
+    </ItemGroup>
+
+</Project>
