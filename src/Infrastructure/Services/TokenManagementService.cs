@@ -13,15 +13,18 @@ namespace Defender.IdentityService.Infrastructure.Services;
 public class TokenManagementService : ITokenManagementService
 {
     private readonly IConfiguration _configuration;
+    private readonly ILoginHistoryService _loginHistoryService;
 
     public TokenManagementService(
-        IConfiguration configuration
+        IConfiguration configuration,
+        ILoginHistoryService loginHistoryService
         )
     {
         _configuration = configuration;
+        _loginHistoryService = loginHistoryService;
     }
 
-    public string GenerateNewJWT(AccountInfo account)
+    public async Task<string> GenerateNewJWTAsync(AccountInfo account)
     {
         var claims = new List<Claim>
             {
@@ -49,6 +52,10 @@ public class TokenManagementService : ITokenManagementService
           expires: DateTime.Now.AddHours(3),
           signingCredentials: creds);
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        var tokenStr = new JwtSecurityTokenHandler().WriteToken(token);
+
+        await _loginHistoryService.AddLoginRecordAsync(new LoginRecord(account.Id, tokenStr));
+
+        return tokenStr;
     }
 }

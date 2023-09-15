@@ -30,6 +30,8 @@ public static class ConfigureServices
         services.AddTransient<IAccountManagementService, AccountManagementService>();
         services.AddTransient<ITokenManagementService, TokenManagementService>();
         services.AddTransient<IGoogleTokenParsingService, GoogleTokenParsingService>();
+        services.AddTransient<ILoginHistoryService, LoginHistoryService>();
+
         services.AddTransient<IUserManagementService, FakeUserManagementService>();
     }
 

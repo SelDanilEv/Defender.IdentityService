@@ -32,20 +32,14 @@ public sealed class ChangeUserPasswordCommandHandler : IRequestHandler<ChangeUse
 {
     private readonly IAccountAccessor _accountAccessor;
     private readonly IAccountManagementService _accountManagementService;
-    private readonly ITokenManagementService _tokenManagementService;
-    private readonly IMapper _mapper;
 
     public ChangeUserPasswordCommandHandler(
         IAccountAccessor accountAccessor,
-        IAccountManagementService accountManagementService,
-        ITokenManagementService tokenManagementService,
-        IMapper mapper
+        IAccountManagementService accountManagementService
         )
     {
         _accountAccessor = accountAccessor;
         _accountManagementService = accountManagementService;
-        _tokenManagementService = tokenManagementService;
-        _mapper = mapper;
     }
 
     public async Task<Unit> Handle(ChangeUserPasswordCommand request, CancellationToken cancellationToken)

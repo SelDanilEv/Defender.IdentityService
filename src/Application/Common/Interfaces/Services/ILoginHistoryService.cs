@@ -2,7 +2,7 @@
 
 namespace Defender.IdentityService.Application.Common.Interfaces;
 
-public interface ITokenManagementService
+public interface ILoginHistoryService
 {
-    Task<string> GenerateNewJWTAsync(AccountInfo account);
+    Task<LoginRecord> AddLoginRecordAsync(LoginRecord loginRecord);
 }

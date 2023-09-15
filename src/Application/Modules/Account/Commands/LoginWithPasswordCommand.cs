@@ -58,7 +58,7 @@ public sealed class LoginWithPasswordCommandHandler : IRequestHandler<LoginWithP
 
         response.AccountInfo = _mapper.Map<AccountDto>(accountInfo);
 
-        response.Token = _tokenManagementService.GenerateNewJWT(accountInfo);
+        response.Token = await _tokenManagementService.GenerateNewJWTAsync(accountInfo);
 
         return response;
     }
