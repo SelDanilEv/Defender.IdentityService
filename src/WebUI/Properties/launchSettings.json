@@ -2,10 +2,11 @@
   "profiles": {
     "WebUI": {
       "commandName": "Project",
+      "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://localhost:2500"
+      "applicationUrl": "https://localhost:2499"
     }
   }
 }

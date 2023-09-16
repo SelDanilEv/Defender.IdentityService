@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Defender.Common.DTOs;
 using Defender.Common.Errors;
+using Defender.Common.Exceptions;
 using Defender.IdentityService.Application.Common.Interfaces;
 using Defender.IdentityService.Application.Models.LoginResponse;
 using FluentValidation;
@@ -49,6 +50,11 @@ public sealed class LoginGoogleCommandHandler : IRequestHandler<LoginGoogleComma
         response.UserInfo = await _userManagementService.CreateOrGetUserByGoogleTokenAsync(request.Token);
 
         var accountInfo = await _accountManagementService.GetOrCreateAccountAsync(response.UserInfo.Id);
+
+        if (accountInfo?.IsBlocked ?? false)
+        {
+            throw new ServiceException(ErrorCode.BR_ACC_UserIsBlocked);
+        }
 
         response.AccountInfo = _mapper.Map<AccountDto>(accountInfo);
 

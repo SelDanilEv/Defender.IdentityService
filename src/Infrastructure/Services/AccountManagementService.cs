@@ -32,6 +32,7 @@ public class AccountManagementService : IAccountManagementService
 
         return accountInfo;
     }
+
     public async Task<AccountInfo> GetAccountWithPasswordAsync(Guid accountId, string password)
     {
         var accountInfo = await this.GetAccountInfoByIdAsync(accountId);
@@ -64,14 +65,7 @@ public class AccountManagementService : IAccountManagementService
 
     private async Task<AccountInfo> GetAccountInfoByIdAsync(Guid accountId)
     {
-        var accountInfo = await _accountInfoRepository.GetAccountInfoByIdAsync(accountId);
-
-        if (accountInfo.IsBlocked)
-        {
-            throw new ServiceException(ErrorCode.BR_ACC_UserIsBlocked);
-        }
-
-        return accountInfo;
+        return await _accountInfoRepository.GetAccountInfoByIdAsync(accountId);
     }
 
 

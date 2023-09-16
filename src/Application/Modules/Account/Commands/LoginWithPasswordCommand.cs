@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Defender.Common.DTOs;
 using Defender.Common.Errors;
+using Defender.Common.Exceptions;
 using Defender.IdentityService.Application.Common.Interfaces;
 using Defender.IdentityService.Application.Models.LoginResponse;
 using FluentValidation;
@@ -55,6 +56,11 @@ public sealed class LoginWithPasswordCommandHandler : IRequestHandler<LoginWithP
         response.UserInfo = await _userManagementService.GetUsersByLoginAsync(request.Login);
 
         var accountInfo = await _accountManagementService.GetAccountWithPasswordAsync(response.UserInfo.Id, request.Password);
+
+        if (accountInfo?.IsBlocked ?? false)
+        {
+            throw new ServiceException(ErrorCode.BR_ACC_UserIsBlocked);
+        }
 
         response.AccountInfo = _mapper.Map<AccountDto>(accountInfo);
 
