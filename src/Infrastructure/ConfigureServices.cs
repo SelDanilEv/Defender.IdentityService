@@ -1,8 +1,13 @@
-﻿using Defender.IdentityService.Application.Common.Interfaces;
+﻿using System.Net.Http.Headers;
+using System.Reflection;
+using Defender.Common.Helpers;
+using Defender.IdentityService.Application.Common.Interfaces;
 using Defender.IdentityService.Application.Common.Interfaces.Repositories;
+using Defender.IdentityService.Application.Common.Interfaces.Wrapper;
 using Defender.IdentityService.Application.Configuration.Options;
 using Defender.IdentityService.Infrastructure.Clients;
-using Defender.IdentityService.Infrastructure.Clients.Interfaces;
+using Defender.IdentityService.Infrastructure.Clients.Google;
+using Defender.IdentityService.Infrastructure.Clients.UserManagementClient;
 using Defender.IdentityService.Infrastructure.Repositories.AccountInfos;
 using Defender.IdentityService.Infrastructure.Repositories.LoginRecords;
 using Defender.IdentityService.Infrastructure.Services;
@@ -16,13 +21,22 @@ public static class ConfigureServices
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
         RegisterServices(services);
 
         RegisterRepositories(services);
 
-        RegisterApiClients(services);
+        RegisterApiClients(services, configuration);
+
+        RegisterClientWrappers(services);
 
         return services;
+    }
+
+    private static void RegisterClientWrappers(IServiceCollection services)
+    {
+        services.AddTransient<IUserManagementWrapper, UserManagementWrapper>();
     }
 
     private static void RegisterServices(IServiceCollection services)
@@ -32,7 +46,7 @@ public static class ConfigureServices
         services.AddTransient<IGoogleTokenParsingService, GoogleTokenParsingService>();
         services.AddTransient<ILoginHistoryService, LoginHistoryService>();
 
-        services.AddTransient<IUserManagementService, FakeUserManagementService>();
+        services.AddTransient<IUserManagementService, UserManagementService>();
     }
 
     private static void RegisterRepositories(IServiceCollection services)
@@ -41,11 +55,20 @@ public static class ConfigureServices
         services.AddSingleton<ILoginRecordRepository, LoginRecordRepository>();
     }
 
-    private static void RegisterApiClients(IServiceCollection services)
+    private static void RegisterApiClients(IServiceCollection services, IConfiguration configuration)
     {
-        services.AddHttpClient<IGoogleClient, GoogleClient>("GoogleClient", (serviceProvider, client) =>
+        services.AddHttpClient<IGoogleClient, GoogleClient>(nameof(GoogleClient), (serviceProvider, client) =>
         {
-            client.BaseAddress = new Uri(serviceProvider.GetRequiredService<IOptions<GoogleOption>>().Value.Url);
+            client.BaseAddress = new Uri(serviceProvider.GetRequiredService<IOptions<GoogleOptions>>().Value.Url);
+        });
+
+        services.AddHttpClient<IUserManagementClient, UserManagementClient>(nameof(UserManagementClient), (serviceProvider, client) =>
+        {
+            client.BaseAddress = new Uri(serviceProvider.GetRequiredService<IOptions<UserManagementOptions>>().Value.Url);
+            client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue(
+                "Bearer",
+                InternalJwtHelper.GenerateInternalJWT(configuration["JwtTokenIssuer"]));
         });
     }
 

@@ -1,6 +1,6 @@
 ﻿using Defender.IdentityService.Application.Common.Interfaces;
 using Defender.IdentityService.Application.Models.Google;
-using Defender.IdentityService.Infrastructure.Clients.Interfaces;
+using Defender.IdentityService.Infrastructure.Clients.Google;
 
 namespace Defender.IdentityService.Infrastructure.Services;
 public class GoogleTokenParsingService : IGoogleTokenParsingService

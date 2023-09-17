@@ -1,7 +1,6 @@
 ﻿using Defender.Common.Errors;
 using FluentValidation;
 using MediatR;
-using ValidationException = Defender.IdentityService.Application.Common.Exceptions.ValidationException;
 
 namespace Defender.IdentityService.Application.Common.Behaviours;
 

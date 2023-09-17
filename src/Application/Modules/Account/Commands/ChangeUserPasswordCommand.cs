@@ -1,7 +1,6 @@
-﻿using AutoMapper;
-using Defender.Common.Errors;
+﻿using Defender.Common.Errors;
+using Defender.Common.Exceptions;
 using Defender.Common.Interfaces;
-using Defender.IdentityService.Application.Common.Exceptions;
 using Defender.IdentityService.Application.Common.Interfaces;
 using FluentValidation;
 using MediatR;

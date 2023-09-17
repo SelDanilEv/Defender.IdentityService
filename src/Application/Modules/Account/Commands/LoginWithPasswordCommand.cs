@@ -53,7 +53,7 @@ public sealed class LoginWithPasswordCommandHandler : IRequestHandler<LoginWithP
     {
         var response = new LoginResponse();
 
-        response.UserInfo = await _userManagementService.GetUsersByLoginAsync(request.Login);
+        response.UserInfo = await _userManagementService.GetUserByLoginAsync(request.Login);
 
         var accountInfo = await _accountManagementService.GetAccountWithPasswordAsync(response.UserInfo.Id, request.Password);
 

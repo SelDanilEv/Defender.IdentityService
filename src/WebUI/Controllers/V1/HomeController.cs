@@ -8,16 +8,21 @@ using Defender.Common.Enums;
 using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Defender.Common.Interfaces;
 
 namespace Defender.IdentityService.WebUI.Controllers.V1;
 
 public class HomeController : BaseApiController
 {
+    private readonly IAccountAccessor _accountAccessor;
+
     public HomeController(
+        IAccountAccessor accountAccessor,
         IMediator mediator,
-        IMapper mapper) 
+        IMapper mapper)
         : base(mediator, mapper)
     {
+        _accountAccessor = accountAccessor;
     }
 
     [HttpGet("health")]
@@ -36,7 +41,7 @@ public class HomeController : BaseApiController
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<object> AuthorizationCheckAsync()
     {
-        return new { IsAuthorized = true };
+        return new { IsAuthorized = true, Role = _accountAccessor.AccountInfo.GetHighestRole() };
     }
 
     [Auth(Roles.SuperAdmin)]

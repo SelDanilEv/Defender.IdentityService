@@ -10,7 +10,7 @@ public class MongoRepository<T> : BaseMongoRepository<T> where T : IBaseModel, n
 {
     private const string ErrorMessage = "Error occur in mongo repository";
 
-    public MongoRepository(MongoDbOption mongoOption) : base(mongoOption)
+    public MongoRepository(MongoDbOptions mongoOption) : base(mongoOption)
     {
     }
 

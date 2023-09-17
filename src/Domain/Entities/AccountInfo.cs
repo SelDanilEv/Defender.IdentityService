@@ -28,9 +28,8 @@ public class AccountInfo : IBaseModel
         if (Roles.Contains(Role.SuperAdmin)) return Role.SuperAdmin;
         if (Roles.Contains(Role.Admin)) return Role.Admin;
         if (Roles.Contains(Role.User)) return Role.User;
-        if (Roles.Contains(Role.Guest)) return Role.Guest;
 
-        return string.Empty;
+        return Role.Guest;
     }
 
 }

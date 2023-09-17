@@ -7,7 +7,7 @@ namespace Defender.IdentityService.Infrastructure.Repositories.LoginRecords;
 
 public class LoginRecordRepository : MongoRepository<LoginRecord>, ILoginRecordRepository
 {
-    public LoginRecordRepository(IOptions<MongoDbOption> mongoOption) : base(mongoOption.Value)
+    public LoginRecordRepository(IOptions<MongoDbOptions> mongoOption) : base(mongoOption.Value)
     {
     }
 

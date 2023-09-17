@@ -14,7 +14,7 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
     private static IMongoDatabase database;
     protected IMongoCollection<Model> _mongoCollection;
 
-    protected BaseMongoRepository(MongoDbOption mongoOption)
+    protected BaseMongoRepository(MongoDbOptions mongoOption)
     {
         mongoOption.ConnectionString =
             String.Format(

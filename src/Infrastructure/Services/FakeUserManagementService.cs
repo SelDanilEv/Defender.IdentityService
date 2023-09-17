@@ -25,13 +25,11 @@ public class FakeUserManagementService : IUserManagementService
         return CreateUserAsync(userDto);
     }
 
-
-
     public async Task<UserDto> CreateOrGetUserByGoogleTokenAsync(string token)
     {
         var googleUser = await _googleTokenParsingService.GetGoogleUserAsync(token);
 
-        var user = await GetUsersByLoginAsync(googleUser.Email);
+        var user = await GetUserByLoginAsync(googleUser.Email);
 
         if (user == null)
         {
@@ -49,7 +47,7 @@ public class FakeUserManagementService : IUserManagementService
         return user;
     }
 
-    public async Task<UserDto> GetUsersByLoginAsync(string login)
+    public async Task<UserDto> GetUserByLoginAsync(string login)
     {
         return _users.FirstOrDefault(x => x.Email == login || x.PhoneNumber == login);
     }

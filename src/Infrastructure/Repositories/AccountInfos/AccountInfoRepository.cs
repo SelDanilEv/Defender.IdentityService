@@ -7,7 +7,7 @@ namespace Defender.IdentityService.Infrastructure.Repositories.AccountInfos;
 
 public class AccountInfoRepository : MongoRepository<AccountInfo>, IAccountInfoRepository
 {
-    public AccountInfoRepository(IOptions<MongoDbOption> mongoOption) : base(mongoOption.Value)
+    public AccountInfoRepository(IOptions<MongoDbOptions> mongoOption) : base(mongoOption.Value)
     {
     }
 

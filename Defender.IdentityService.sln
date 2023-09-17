@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebUI", "src\WebUI\WebUI.cs
 		{34C0FACD-F3D9-400C-8945-554DD6B0819A} = {34C0FACD-F3D9-400C-8945-554DD6B0819A}
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Defender.Common", "..\Defender.Common\src\Defender.Common\Defender.Common.csproj", "{B350C690-BB45-45FD-B489-3F4CB2644D85}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{6A410984-D479-4DC4-A5F8-D1AA20FEEEAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A410984-D479-4DC4-A5F8-D1AA20FEEEAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A410984-D479-4DC4-A5F8-D1AA20FEEEAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B350C690-BB45-45FD-B489-3F4CB2644D85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B350C690-BB45-45FD-B489-3F4CB2644D85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B350C690-BB45-45FD-B489-3F4CB2644D85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B350C690-BB45-45FD-B489-3F4CB2644D85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,6 +54,7 @@ Global
 		{34C0FACD-F3D9-400C-8945-554DD6B0819A} = {6ED356A7-8B47-4613-AD01-C85CF28491BD}
 		{117DA02F-5274-4565-ACC6-DA9B6E568B09} = {6ED356A7-8B47-4613-AD01-C85CF28491BD}
 		{6A410984-D479-4DC4-A5F8-D1AA20FEEEAB} = {6ED356A7-8B47-4613-AD01-C85CF28491BD}
+		{B350C690-BB45-45FD-B489-3F4CB2644D85} = {6ED356A7-8B47-4613-AD01-C85CF28491BD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3CB609D9-5D54-4C11-A371-DAAC8B74E430}

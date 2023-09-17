@@ -6,7 +6,6 @@ using Defender.Common.Errors;
 using Defender.Common.Exceptions;
 using Defender.Common.Helpers;
 using Defender.Common.Interfaces;
-using Defender.IdentityService.Application.Common.Exceptions;
 using FluentValidation.AspNetCore;
 using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -112,7 +111,7 @@ public static class ConfigureServices
 
     private static void ConfigureProblemDetails(ProblemDetailsOptions options, IWebHostEnvironment environment)
     {
-        options.IncludeExceptionDetails = (ctx, ex) => environment.IsEnvironment("Development");
+        options.IncludeExceptionDetails = (ctx, ex) => environment.IsEnvironment("Development") || environment.IsEnvironment("DockerDev");
 
         options.Map<ValidationException>(exception =>
         {
