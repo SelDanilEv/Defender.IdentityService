@@ -12,32 +12,9 @@ public class LoginRecordRepository : MongoRepository<LoginRecord>, ILoginRecordR
     {
     }
 
-    #region Default methods
-
-    public async Task<IList<LoginRecord>> GetAllLoginRecordsAsync()
-    {
-        return await GetItemsAsync();
-    }
-
-    public async Task<LoginRecord> GetLoginRecordByIdAsync(Guid id)
-    {
-        return await GetItemAsync(id);
-    }
-
     public async Task<LoginRecord> CreateLoginRecordAsync(LoginRecord record)
     {
         return await AddItemAsync(record);
     }
 
-    public async Task<LoginRecord> ReplaceLoginRecordAsync(LoginRecord updatedRecord)
-    {
-        return await ReplaceItemAsync(updatedRecord);
-    }
-
-    public async Task RemoveLoginRecordAsync(Guid id)
-    {
-        await RemoveItemAsync(id);
-    }
-
-    #endregion
 }

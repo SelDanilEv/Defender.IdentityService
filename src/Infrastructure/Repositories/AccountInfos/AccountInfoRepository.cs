@@ -13,13 +13,6 @@ public class AccountInfoRepository : MongoRepository<AccountInfo>, IAccountInfoR
     {
     }
 
-    #region Default methods
-
-    public async Task<IList<AccountInfo>> GetAllAccountInfosAsync()
-    {
-        return await GetItemsAsync();
-    }
-
     public async Task<AccountInfo> GetAccountInfoByIdAsync(Guid id)
     {
         return await GetItemAsync(id);
@@ -30,7 +23,7 @@ public class AccountInfoRepository : MongoRepository<AccountInfo>, IAccountInfoR
         return await AddItemAsync(user);
     }
 
-    public async Task UpdateNotificationAsync(Guid id, UpdateModelRequest<AccountInfo> updateModelRequest)
+    public async Task UpdateAccountInfoAsync(Guid id, UpdateModelRequest<AccountInfo> updateModelRequest)
     {
         var filter = this.CreateIdFilter(id);
 
@@ -38,16 +31,4 @@ public class AccountInfoRepository : MongoRepository<AccountInfo>, IAccountInfoR
 
         await _mongoCollection.UpdateOneAsync(filter, updateDefinition);
     }
-
-    public async Task<AccountInfo> ReplaceAccountInfoAsync(AccountInfo updatedAccountInfo)
-    {
-        return await ReplaceItemAsync(updatedAccountInfo);
-    }
-
-    public async Task RemoveAccountInfoAsync(Guid id)
-    {
-        await RemoveItemAsync(id);
-    }
-
-    #endregion
 }

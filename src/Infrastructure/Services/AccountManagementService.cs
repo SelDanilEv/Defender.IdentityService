@@ -53,7 +53,7 @@ public class AccountManagementService : IAccountManagementService
         updateRequest
             .UpdateField(x => x.PasswordHash, PasswordHelper.HashPassword(newPassword));
 
-        await _accountInfoRepository.UpdateNotificationAsync(accountId, updateRequest);
+        await _accountInfoRepository.UpdateAccountInfoAsync(accountId, updateRequest);
     }
 
     public async Task BlockAsync(Guid accountId, bool doBlockUser)
@@ -64,7 +64,7 @@ public class AccountManagementService : IAccountManagementService
         updateRequest
             .UpdateField(x => x.IsBlocked, doBlockUser);
 
-        await _accountInfoRepository.UpdateNotificationAsync(accountId, updateRequest);
+        await _accountInfoRepository.UpdateAccountInfoAsync(accountId, updateRequest);
     }
 
     private async Task<AccountInfo> GetAccountInfoByIdAsync(Guid accountId)
