@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Defender.Common.Wrapper;
 using Defender.IdentityService.Application.Common.Interfaces.Wrapper;
+using Defender.IdentityService.Infrastructure.Clients.UserManagement.Generated;
 
-namespace Defender.IdentityService.Infrastructure.Clients.UserManagementClient;
+namespace Defender.IdentityService.Infrastructure.Clients.UserManagement;
 
 public class UserManagementWrapper : BaseSwaggerWrapper, IUserManagementWrapper
 {
@@ -26,7 +27,7 @@ public class UserManagementWrapper : BaseSwaggerWrapper, IUserManagementWrapper
             Nickname = user.Nickname
         };
 
-        return await this.ExecuteSafelyAsync(async() =>
+        return await ExecuteSafelyAsync(async () =>
         {
             var response = await _userManagementClient.CreateAsync(createCommand);
 
@@ -42,7 +43,7 @@ public class UserManagementWrapper : BaseSwaggerWrapper, IUserManagementWrapper
             Login = login,
         };
 
-        return await this.ExecuteSafelyAsync(async () =>
+        return await ExecuteSafelyAsync(async () =>
         {
             var response = await _userManagementClient.GetByLoginAsync(query);
 

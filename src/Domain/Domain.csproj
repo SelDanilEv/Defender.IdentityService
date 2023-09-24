@@ -14,4 +14,8 @@
       <PackageReference Include="MongoDB.Bson" Version="2.21.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\Defender.Common\src\Defender.Common\Defender.Common.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json.Serialization;
 using Defender.Common.Accessors;
 using Defender.Common.Errors;
 using Defender.Common.Exceptions;
@@ -36,7 +37,11 @@ public static class ConfigureServices
 
         services.AddFluentValidationAutoValidation();
 
-        services.AddControllers();
+        services.AddControllers().AddJsonOptions(x =>
+        {
+            x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            x.JsonSerializerOptions.IgnoreNullValues = true;
+        });
 
         services.Configure<ApiBehaviorOptions>(options =>
             options.SuppressModelStateInvalidFilter = true);

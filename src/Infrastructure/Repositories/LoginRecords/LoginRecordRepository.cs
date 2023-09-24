@@ -1,5 +1,6 @@
-﻿using Defender.IdentityService.Application.Common.Interfaces.Repositories;
-using Defender.IdentityService.Application.Configuration.Options;
+﻿using Defender.Common.Configuration.Options;
+using Defender.Common.Repositories;
+using Defender.IdentityService.Application.Common.Interfaces.Repositories;
 using Defender.IdentityService.Domain.Entities;
 using Microsoft.Extensions.Options;
 
@@ -28,9 +29,9 @@ public class LoginRecordRepository : MongoRepository<LoginRecord>, ILoginRecordR
         return await AddItemAsync(record);
     }
 
-    public async Task<LoginRecord> UpdateLoginRecordAsync(LoginRecord updatedRecord)
+    public async Task<LoginRecord> ReplaceLoginRecordAsync(LoginRecord updatedRecord)
     {
-        return await UpdateItemAsync(updatedRecord);
+        return await ReplaceItemAsync(updatedRecord);
     }
 
     public async Task RemoveLoginRecordAsync(Guid id)

@@ -1,5 +1,7 @@
-﻿using Defender.IdentityService.Application.Common.Interfaces.Repositories;
-using Defender.IdentityService.Application.Configuration.Options;
+﻿using Defender.Common.Configuration.Options;
+using Defender.Common.Models;
+using Defender.Common.Repositories;
+using Defender.IdentityService.Application.Common.Interfaces.Repositories;
 using Defender.IdentityService.Domain.Entities;
 using Microsoft.Extensions.Options;
 
@@ -28,9 +30,18 @@ public class AccountInfoRepository : MongoRepository<AccountInfo>, IAccountInfoR
         return await AddItemAsync(user);
     }
 
-    public async Task<AccountInfo> UpdateAccountInfoAsync(AccountInfo updatedAccountInfo)
+    public async Task UpdateNotificationAsync(Guid id, UpdateModelRequest<AccountInfo> updateModelRequest)
     {
-        return await UpdateItemAsync(updatedAccountInfo);
+        var filter = this.CreateIdFilter(id);
+
+        var updateDefinition = updateModelRequest.BuildUpdateDefinition();
+
+        await _mongoCollection.UpdateOneAsync(filter, updateDefinition);
+    }
+
+    public async Task<AccountInfo> ReplaceAccountInfoAsync(AccountInfo updatedAccountInfo)
+    {
+        return await ReplaceItemAsync(updatedAccountInfo);
     }
 
     public async Task RemoveAccountInfoAsync(Guid id)

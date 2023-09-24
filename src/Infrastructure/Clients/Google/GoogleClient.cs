@@ -1,9 +1,8 @@
 ﻿using Defender.IdentityService.Application.Common.Exceptions;
 using Defender.IdentityService.Application.Models.Google;
-using Defender.IdentityService.Infrastructure.Clients.Google;
 using Newtonsoft.Json;
 
-namespace Defender.IdentityService.Infrastructure.Clients;
+namespace Defender.IdentityService.Infrastructure.Clients.Google;
 
 public partial class GoogleClient : IGoogleClient
 {

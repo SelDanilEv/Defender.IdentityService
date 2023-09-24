@@ -47,27 +47,30 @@ public class AccountManagementService : IAccountManagementService
 
     public async Task ChangePasswordAsync(Guid accountId, string newPassword)
     {
-        var user = await GetOrCreateAccountAsync(accountId, newPassword);
+        var updateRequest = UpdateModelRequest<AccountInfo>
+            .Init();
 
-        user.PasswordHash = PasswordHelper.HashPassword(newPassword);
+        updateRequest
+            .UpdateField(x => x.PasswordHash, PasswordHelper.HashPassword(newPassword));
 
-        await _accountInfoRepository.UpdateAccountInfoAsync(user);
+        await _accountInfoRepository.UpdateNotificationAsync(accountId, updateRequest);
     }
 
     public async Task BlockAsync(Guid accountId, bool doBlockUser)
     {
-        var user = await GetOrCreateAccountAsync(accountId);
+        var updateRequest = UpdateModelRequest<AccountInfo>
+            .Init();
 
-        user.IsBlocked = doBlockUser;
+        updateRequest
+            .UpdateField(x => x.IsBlocked, doBlockUser);
 
-        await _accountInfoRepository.UpdateAccountInfoAsync(user);
+        await _accountInfoRepository.UpdateNotificationAsync(accountId, updateRequest);
     }
 
     private async Task<AccountInfo> GetAccountInfoByIdAsync(Guid accountId)
     {
         return await _accountInfoRepository.GetAccountInfoByIdAsync(accountId);
     }
-
 
     private AccountInfo CreateDefaultUserAccount(Guid accountId, string password)
     {

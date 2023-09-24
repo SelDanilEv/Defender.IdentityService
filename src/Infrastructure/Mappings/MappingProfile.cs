@@ -1,4 +1,5 @@
 using AutoMapper;
+using Defender.IdentityService.Infrastructure.Clients.UserManagement.Generated;
 
 namespace Defender.IdentityService.Infrastructure.Mappings;
 
@@ -6,6 +7,6 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<Clients.UserManagementClient.UserDto, Common.DTOs.UserDto>();
+        CreateMap<UserDto, Common.DTOs.UserDto>();
     }
 }
