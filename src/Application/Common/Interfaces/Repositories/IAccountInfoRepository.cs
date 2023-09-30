@@ -7,5 +7,5 @@ public interface IAccountInfoRepository
 {
     Task<AccountInfo> GetAccountInfoByIdAsync(Guid id);
     Task<AccountInfo> CreateAccountInfoAsync(AccountInfo account);
-    Task UpdateAccountInfoAsync(Guid id, UpdateModelRequest<AccountInfo> updateModelRequest);
+    Task<AccountInfo> UpdateAccountInfoAsync(UpdateModelRequest<AccountInfo> updateModelRequest);
 }

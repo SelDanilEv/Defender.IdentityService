@@ -6,10 +6,12 @@ using Defender.IdentityService.Application.Common.Interfaces.Repositories;
 using Defender.IdentityService.Application.Common.Interfaces.Wrapper;
 using Defender.IdentityService.Application.Configuration.Options;
 using Defender.IdentityService.Infrastructure.Clients.Google;
+using Defender.IdentityService.Infrastructure.Clients.Notification;
+using Defender.IdentityService.Infrastructure.Clients.Notification.Generated;
 using Defender.IdentityService.Infrastructure.Clients.UserManagement;
 using Defender.IdentityService.Infrastructure.Clients.UserManagement.Generated;
+using Defender.IdentityService.Infrastructure.Repositories;
 using Defender.IdentityService.Infrastructure.Repositories.AccountInfos;
-using Defender.IdentityService.Infrastructure.Repositories.LoginRecords;
 using Defender.IdentityService.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,20 +39,23 @@ public static class ConfigureServices
     private static void RegisterClientWrappers(IServiceCollection services)
     {
         services.AddTransient<IUserManagementWrapper, UserManagementWrapper>();
+        services.AddTransient<INotificationWrapper, NotificationWrapper>();
     }
 
     private static void RegisterServices(IServiceCollection services)
     {
+        services.AddTransient<IAccountVerificationService, AccountVerificationService>();
+        services.AddTransient<IAccessCodeService, AccessCodeService>();
         services.AddTransient<IAccountManagementService, AccountManagementService>();
         services.AddTransient<ITokenManagementService, TokenManagementService>();
         services.AddTransient<IGoogleTokenParsingService, GoogleTokenParsingService>();
         services.AddTransient<ILoginHistoryService, LoginHistoryService>();
-
         services.AddTransient<IUserManagementService, UserManagementService>();
     }
 
     private static void RegisterRepositories(IServiceCollection services)
     {
+        services.AddSingleton<IAccessCodeRepository, AccessCodeRepository>();
         services.AddSingleton<IAccountInfoRepository, AccountInfoRepository>();
         services.AddSingleton<ILoginRecordRepository, LoginRecordRepository>();
     }
@@ -65,6 +70,15 @@ public static class ConfigureServices
         services.AddHttpClient<IUserManagementClient, UserManagementClient>(nameof(UserManagementClient), (serviceProvider, client) =>
         {
             client.BaseAddress = new Uri(serviceProvider.GetRequiredService<IOptions<UserManagementOptions>>().Value.Url);
+            client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue(
+                "Bearer",
+                InternalJwtHelper.GenerateInternalJWT(configuration["JwtTokenIssuer"]));
+        });
+
+        services.AddHttpClient<INotificationClient, NotificationClient>(nameof(NotificationClient), (serviceProvider, client) =>
+        {
+            client.BaseAddress = new Uri(serviceProvider.GetRequiredService<IOptions<NotificationOptions>>().Value.Url);
             client.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue(
                 "Bearer",

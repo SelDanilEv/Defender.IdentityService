@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Defender.Common.Interfaces;
 
-namespace Defender.IdentityService.WebUI.Controllers.V1;
+namespace Defender.IdentityService.WebApi.Controllers.V1;
 
 public class HomeController : BaseApiController
 {

@@ -1,6 +1,6 @@
 using Defender.IdentityService.Application;
 using Defender.IdentityService.Infrastructure;
-using Defender.IdentityService.WebUI;
+using Defender.IdentityService.WebApi;
 using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -20,7 +20,7 @@ builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
 
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
-builder.Services.AddWebUIServices(builder.Environment, builder.Configuration);
+builder.Services.AddWebApiServices(builder.Environment, builder.Configuration);
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration);
 

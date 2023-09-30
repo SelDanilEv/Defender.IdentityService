@@ -18,6 +18,11 @@ public class UserManagementService : IUserManagementService
         _userManagementWrapper = userManagementWrapper;
     }
 
+    public async Task<UserDto> GetUserByIdAsync(Guid id)
+    {
+        return await _userManagementWrapper.GetUserByIdAsync(id);
+    }
+
     public async Task<UserDto> CreateUserAsync(string email, string phoneNumber, string nickname)
     {
         return await _userManagementWrapper.CreateUserAsync(CreateUser(email, phoneNumber, nickname));
@@ -52,5 +57,4 @@ public class UserManagementService : IUserManagementService
             Nickname = nickname
         };
     }
-
 }

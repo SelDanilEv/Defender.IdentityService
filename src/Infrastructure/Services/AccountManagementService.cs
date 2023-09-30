@@ -12,7 +12,6 @@ public class AccountManagementService : IAccountManagementService
 {
     private readonly IAccountInfoRepository _accountInfoRepository;
 
-
     public AccountManagementService(
         IAccountInfoRepository accountInfoRepository)
     {
@@ -48,23 +47,23 @@ public class AccountManagementService : IAccountManagementService
     public async Task ChangePasswordAsync(Guid accountId, string newPassword)
     {
         var updateRequest = UpdateModelRequest<AccountInfo>
-            .Init();
+            .Init(accountId);
 
         updateRequest
             .UpdateField(x => x.PasswordHash, PasswordHelper.HashPassword(newPassword));
 
-        await _accountInfoRepository.UpdateAccountInfoAsync(accountId, updateRequest);
+        await _accountInfoRepository.UpdateAccountInfoAsync(updateRequest);
     }
 
     public async Task BlockAsync(Guid accountId, bool doBlockUser)
     {
         var updateRequest = UpdateModelRequest<AccountInfo>
-            .Init();
+            .Init(accountId);
 
         updateRequest
             .UpdateField(x => x.IsBlocked, doBlockUser);
 
-        await _accountInfoRepository.UpdateAccountInfoAsync(accountId, updateRequest);
+        await _accountInfoRepository.UpdateAccountInfoAsync(updateRequest);
     }
 
     private async Task<AccountInfo> GetAccountInfoByIdAsync(Guid accountId)

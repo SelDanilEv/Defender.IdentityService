@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Defender.Common.Attributes;
 using Defender.Common.Models;
 
-namespace Defender.IdentityService.WebUI.Controllers.V1;
+namespace Defender.IdentityService.WebApi.Controllers.V1;
 
 public class AccountController : BaseApiController
 {

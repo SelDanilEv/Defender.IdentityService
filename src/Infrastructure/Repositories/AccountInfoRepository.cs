@@ -23,12 +23,8 @@ public class AccountInfoRepository : MongoRepository<AccountInfo>, IAccountInfoR
         return await AddItemAsync(user);
     }
 
-    public async Task UpdateAccountInfoAsync(Guid id, UpdateModelRequest<AccountInfo> updateModelRequest)
+    public async Task<AccountInfo> UpdateAccountInfoAsync(UpdateModelRequest<AccountInfo> updateModelRequest)
     {
-        var filter = this.CreateIdFilter(id);
-
-        var updateDefinition = updateModelRequest.BuildUpdateDefinition();
-
-        await _mongoCollection.UpdateOneAsync(filter, updateDefinition);
+        return await UpdateItemAsync(updateModelRequest.ModelId, updateModelRequest.BuildUpdateDefinition());
     }
 }

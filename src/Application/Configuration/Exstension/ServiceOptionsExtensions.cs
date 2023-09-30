@@ -15,6 +15,8 @@ public static class ServiceOptionsExtensions
 
         services.Configure<UserManagementOptions>(configuration.GetSection(nameof(UserManagementOptions)));
 
+        services.Configure<NotificationOptions>(configuration.GetSection(nameof(NotificationOptions)));
+
         return services;
     }
 }

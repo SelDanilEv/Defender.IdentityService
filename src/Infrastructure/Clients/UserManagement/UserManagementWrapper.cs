@@ -36,6 +36,21 @@ public class UserManagementWrapper : BaseSwaggerWrapper, IUserManagementWrapper
 
     }
 
+    public async Task<Common.DTOs.UserDto> GetUserByIdAsync(Guid userId)
+    {
+        var query = new GetUserByIdQuery()
+        {
+            UserId = userId,
+        };
+
+        return await ExecuteSafelyAsync(async () =>
+        {
+            var response = await _userManagementClient.GetByIdAsync(query);
+
+            return _mapper.Map<Common.DTOs.UserDto>(response);
+        });
+    }
+
     public async Task<Common.DTOs.UserDto> GetUserByLoginAsync(string login)
     {
         var query = new GetUserByLoginQuery()
