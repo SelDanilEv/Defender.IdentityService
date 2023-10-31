@@ -152,7 +152,7 @@ public static class ConfigureServices
             problemDetails.Detail = ErrorCodeHelper.GetErrorCode(ErrorCode.UnhandledError);
             problemDetails.Status = StatusCodes.Status500InternalServerError;
             return problemDetails;
-        }); ;
+        });
     }
 
 }

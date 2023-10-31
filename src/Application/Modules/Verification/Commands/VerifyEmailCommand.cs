@@ -39,8 +39,8 @@ public sealed class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailComma
 
     public async Task<bool> Handle(VerifyEmailCommand request, CancellationToken cancellationToken)
     {
-        var account = await _accountVerificationService.VerifyEmailAsync(request.Hash, request.Code);
+        await _accountVerificationService.VerifyEmailAsync(request.Hash, request.Code);
 
-        return account.IsEmailVerified;
+        return true;
     }
 }
