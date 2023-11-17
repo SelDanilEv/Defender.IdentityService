@@ -1,17 +1,17 @@
 ﻿using AutoMapper;
+using Defender.Common.Clients.Notification;
 using Defender.Common.Wrapper;
 using Defender.IdentityService.Application.Common.Interfaces.Wrapper;
-using Defender.IdentityService.Infrastructure.Clients.Notification.Generated;
 
 namespace Defender.IdentityService.Infrastructure.Clients.Notification;
 
 public class NotificationWrapper : BaseSwaggerWrapper, INotificationWrapper
 {
     private readonly IMapper _mapper;
-    private readonly INotificationClient _notificationClient;
+    private readonly INotificationAsServiceClient _notificationClient;
 
     public NotificationWrapper(
-        INotificationClient notificationClient,
+        INotificationAsServiceClient notificationClient,
         IMapper mapper)
     {
         _notificationClient = notificationClient;

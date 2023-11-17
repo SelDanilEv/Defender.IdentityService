@@ -1,5 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Reflection;
+using Defender.Common.Clients.Notification;
+using Defender.Common.Clients.UserManagement;
 using Defender.Common.Helpers;
 using Defender.IdentityService.Application.Common.Interfaces;
 using Defender.IdentityService.Application.Common.Interfaces.Repositories;
@@ -7,9 +9,7 @@ using Defender.IdentityService.Application.Common.Interfaces.Wrapper;
 using Defender.IdentityService.Application.Configuration.Options;
 using Defender.IdentityService.Infrastructure.Clients.Google;
 using Defender.IdentityService.Infrastructure.Clients.Notification;
-using Defender.IdentityService.Infrastructure.Clients.Notification.Generated;
 using Defender.IdentityService.Infrastructure.Clients.UserManagement;
-using Defender.IdentityService.Infrastructure.Clients.UserManagement.Generated;
 using Defender.IdentityService.Infrastructure.Repositories;
 using Defender.IdentityService.Infrastructure.Repositories.AccountInfos;
 using Defender.IdentityService.Infrastructure.Services;
@@ -67,23 +67,25 @@ public static class ConfigureServices
             client.BaseAddress = new Uri(serviceProvider.GetRequiredService<IOptions<GoogleOptions>>().Value.Url);
         });
 
-        services.AddHttpClient<IUserManagementClient, UserManagementClient>(nameof(UserManagementClient), (serviceProvider, client) =>
-        {
-            client.BaseAddress = new Uri(serviceProvider.GetRequiredService<IOptions<UserManagementOptions>>().Value.Url);
-            client.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue(
-                "Bearer",
-                InternalJwtHelper.GenerateInternalJWT(configuration["JwtTokenIssuer"]));
-        });
+        services.RegisterUserManagementAsServiceClient(
+            (serviceProvider, client) =>
+            {
+                client.BaseAddress = new Uri(serviceProvider.GetRequiredService<IOptions<UserManagementOptions>>().Value.Url);
+                client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue(
+                    "Bearer",
+                    InternalJwtHelper.GenerateInternalJWT(configuration["JwtTokenIssuer"]));
+            });
 
-        services.AddHttpClient<INotificationClient, NotificationClient>(nameof(NotificationClient), (serviceProvider, client) =>
-        {
-            client.BaseAddress = new Uri(serviceProvider.GetRequiredService<IOptions<NotificationOptions>>().Value.Url);
-            client.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue(
-                "Bearer",
-                InternalJwtHelper.GenerateInternalJWT(configuration["JwtTokenIssuer"]));
-        });
+        services.RegisterNotificationAsServiceClient(
+            (serviceProvider, client) =>
+            {
+                client.BaseAddress = new Uri(serviceProvider.GetRequiredService<IOptions<NotificationOptions>>().Value.Url);
+                client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue(
+                    "Bearer",
+                    InternalJwtHelper.GenerateInternalJWT(configuration["JwtTokenIssuer"]));
+            });
     }
 
 }

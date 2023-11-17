@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using Defender.Common.Attributes;
 using Defender.Common.Models;
+using Defender.Common.DTOs;
+using Defender.IdentityService.Application.Modules.Account.Queries;
 
 namespace Defender.IdentityService.WebApi.Controllers.V1;
 
@@ -56,6 +58,15 @@ public class AccountController : BaseApiController
     public async Task BlockUserAsync([FromBody] BlockUserCommand blockUserCommand)
     {
         await ProcessApiCallAsync(blockUserCommand);
+    }
+
+    [HttpGet("details")]
+    [Auth(Roles.User)]
+    [ProducesResponseType(typeof(AccountDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    public async Task<AccountDto> CheckAccountVerificationUserAsync([FromQuery] GetCurrentAccountDetailsQuery query)
+    {
+        return await ProcessApiCallAsync<GetCurrentAccountDetailsQuery, AccountDto>(query);
     }
 
 }

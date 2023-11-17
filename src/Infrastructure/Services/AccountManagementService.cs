@@ -18,9 +18,14 @@ public class AccountManagementService : IAccountManagementService
         _accountInfoRepository = accountInfoRepository;
     }
 
+    public async Task<AccountInfo> GetAccountByIdAsync(Guid accountId)
+    {
+        return await _accountInfoRepository.GetAccountInfoByIdAsync(accountId);
+    }
+
     public async Task<AccountInfo> GetOrCreateAccountAsync(Guid accountId, string password = "")
     {
-        var accountInfo = await this.GetAccountInfoByIdAsync(accountId);
+        var accountInfo = await this.GetAccountByIdAsync(accountId);
 
         if (accountInfo == null)
         {
@@ -34,7 +39,7 @@ public class AccountManagementService : IAccountManagementService
 
     public async Task<AccountInfo> GetAccountWithPasswordAsync(Guid accountId, string password)
     {
-        var accountInfo = await this.GetAccountInfoByIdAsync(accountId);
+        var accountInfo = await this.GetAccountByIdAsync(accountId);
 
         if (!PasswordHelper.CheckPassword(password, accountInfo.PasswordHash))
         {
@@ -64,11 +69,6 @@ public class AccountManagementService : IAccountManagementService
             .UpdateField(x => x.IsBlocked, doBlockUser);
 
         await _accountInfoRepository.UpdateAccountInfoAsync(updateRequest);
-    }
-
-    private async Task<AccountInfo> GetAccountInfoByIdAsync(Guid accountId)
-    {
-        return await _accountInfoRepository.GetAccountInfoByIdAsync(accountId);
     }
 
     private AccountInfo CreateDefaultUserAccount(Guid accountId, string password)

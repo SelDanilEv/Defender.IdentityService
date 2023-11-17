@@ -1,17 +1,17 @@
 ﻿using AutoMapper;
+using Defender.Common.Clients.UserManagement;
 using Defender.Common.Wrapper;
 using Defender.IdentityService.Application.Common.Interfaces.Wrapper;
-using Defender.IdentityService.Infrastructure.Clients.UserManagement.Generated;
 
 namespace Defender.IdentityService.Infrastructure.Clients.UserManagement;
 
 public class UserManagementWrapper : BaseSwaggerWrapper, IUserManagementWrapper
 {
     private readonly IMapper _mapper;
-    private readonly IUserManagementClient _userManagementClient;
+    private readonly IUserManagementAsServiceClient _userManagementClient;
 
     public UserManagementWrapper(
-        IUserManagementClient userManagementClient,
+        IUserManagementAsServiceClient userManagementClient,
         IMapper mapper)
     {
         _userManagementClient = userManagementClient;
