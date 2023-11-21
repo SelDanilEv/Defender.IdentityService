@@ -44,17 +44,20 @@ public sealed class CreateAccountCommandHandler : IRequestHandler<CreateAccountC
     private readonly IUserManagementService _userManagementService;
     private readonly IAccountManagementService _accountManagementService;
     private readonly ITokenManagementService _tokenManagementService;
+    private readonly IAccountVerificationService _accountVerificationService;
     private readonly IMapper _mapper;
 
     public CreateAccountCommandHandler(
         IUserManagementService userManagementService,
         IAccountManagementService accountManagementService,
+        IAccountVerificationService accountVerificationService,
         ITokenManagementService tokenManagementService,
         IMapper mapper
         )
     {
         _userManagementService = userManagementService;
         _accountManagementService = accountManagementService;
+        _accountVerificationService = accountVerificationService;
         _tokenManagementService = tokenManagementService;
         _mapper = mapper;
     }
@@ -66,6 +69,8 @@ public sealed class CreateAccountCommandHandler : IRequestHandler<CreateAccountC
         response.UserInfo = await _userManagementService.CreateUserAsync(request.Email, request.PhoneNumber, request.Nickname);
 
         var accountInfo = await _accountManagementService.GetOrCreateAccountAsync(response.UserInfo.Id, request.Password);
+
+        await _accountVerificationService.SendVerificationEmailAsync(response.UserInfo.Id).ConfigureAwait(false);
 
         response.AccountInfo = _mapper.Map<AccountDto>(accountInfo);
 

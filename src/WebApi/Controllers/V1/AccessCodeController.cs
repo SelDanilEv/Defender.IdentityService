@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Defender.IdentityService.Application.Models.LoginResponse;
 using Defender.IdentityService.Application.Modules.Account.Commands;
 using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
@@ -18,7 +17,7 @@ public class AccessCodeController : BaseApiController
 
     [HttpPost("block")]
     [Auth(Roles.Admin)]
-    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task BlockUserAsync([FromBody] BlockUserCommand blockUserCommand)
     {

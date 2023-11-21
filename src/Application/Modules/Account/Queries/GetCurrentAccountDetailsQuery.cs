@@ -8,7 +8,7 @@ namespace Defender.IdentityService.Application.Modules.Account.Queries;
 
 public record GetCurrentAccountDetailsQuery : IRequest<AccountInfo>
 {
-    public Guid? AccountId { get; set; }
+    public Guid AccountId { get; set; } = Guid.Empty;
 };
 
 public class GetCurrentAccountDetailsQueryHandler : IRequestHandler<GetCurrentAccountDetailsQuery, AccountInfo>
@@ -31,13 +31,13 @@ public class GetCurrentAccountDetailsQueryHandler : IRequestHandler<GetCurrentAc
 
         var currentAccountInfo = await _accountManagementService.GetAccountByIdAsync(currentAccountId);
 
-        if (currentAccountId == request.AccountId)
+        if (currentAccountId == request.AccountId || request.AccountId == Guid.Empty)
         {
             return currentAccountInfo;
         }
         else if (currentAccountInfo.IsAdmin)
         {
-            return await _accountManagementService.GetAccountByIdAsync(request.AccountId.Value);
+            return await _accountManagementService.GetAccountByIdAsync(request.AccountId);
         }
 
         throw new ForbiddenAccessException();

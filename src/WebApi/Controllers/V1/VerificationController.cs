@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Defender.IdentityService.Application.Models.LoginResponse;
 using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using Defender.IdentityService.Application.Modules.Verification.Commands;
@@ -16,23 +15,20 @@ public class VerificationController : BaseApiController
     {
     }
 
-    [HttpPost("verify/email")]
+    [HttpPost("send-verification-email")]
     [Auth(Roles.User)]
-    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task SendVerificationEmailAsync([FromBody] SendEmailVerificationCommand command)
     {
         await ProcessApiCallAsync<SendEmailVerificationCommand>(command);
     }
 
-
-
-    [HttpGet("verify/email")]
-    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+    [HttpPost("verify/email")]
+    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-    public async Task<bool> VerifyEmailAsync([FromQuery] VerifyEmailCommand command)
+    public async Task<bool> VerifyEmailAsync([FromBody] VerifyEmailCommand command)
     {
         return await ProcessApiCallWithoutMappingAsync<VerifyEmailCommand, bool>(command);
     }
-
 }

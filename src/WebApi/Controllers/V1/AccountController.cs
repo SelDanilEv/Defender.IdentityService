@@ -44,7 +44,7 @@ public class AccountController : BaseApiController
 
     [HttpPost("password/change")]
     [Auth(Roles.User)]
-    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task ChangeUserPasswordAsync([FromBody] ChangeUserPasswordCommand changeUserPasswordCommand)
     {
@@ -53,7 +53,7 @@ public class AccountController : BaseApiController
 
     [HttpPost("block")]
     [Auth(Roles.Admin)]
-    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task BlockUserAsync([FromBody] BlockUserCommand blockUserCommand)
     {

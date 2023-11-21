@@ -1,12 +1,10 @@
-using AutoMapper;
+using Defender.Common.Mapping;
 
 namespace Defender.IdentityService.Infrastructure.Mappings;
 
-public class MappingProfile : Profile
+public class MappingProfile : BaseMappingProfile
 {
     public MappingProfile()
     {
-        CreateMap<Common.Clients.UserManagement.UserDto, Common.DTOs.UserDto>();
-        CreateMap<Common.Clients.Identity.UserDto, Common.DTOs.UserDto>();
     }
 }

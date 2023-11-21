@@ -64,9 +64,7 @@ public class AccountVerificationService : IAccountVerificationService
     }
 
     private string CreateVerificationLink(int hash, int code) => 
-        String.Format(_configuration["VerificationLinkTemplate"],
-                _httpContextAccessor.HttpContext.Request.Scheme,
-                _httpContextAccessor.HttpContext.Request.Host,
+        String.Format(_configuration["VerificationEmailLinkTemplate"],
                 hash,
                 code);
 }
