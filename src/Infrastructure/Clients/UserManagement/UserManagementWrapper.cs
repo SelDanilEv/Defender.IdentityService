@@ -1,20 +1,24 @@
 ﻿using AutoMapper;
 using Defender.Common.Clients.UserManagement;
-using Defender.Common.Wrapper;
+using Defender.Common.Interfaces;
+using Defender.Common.Wrapper.Internal;
 using Defender.IdentityService.Application.Common.Interfaces.Wrapper;
 
 namespace Defender.IdentityService.Infrastructure.Clients.UserManagement;
 
-public class UserManagementWrapper : BaseSwaggerWrapper, IUserManagementWrapper
+public class UserManagementWrapper : BaseInternalSwaggerWrapper, IUserManagementWrapper
 {
     private readonly IMapper _mapper;
-    private readonly IUserManagementAsServiceClient _userManagementClient;
+    private readonly IUserManagementServiceClient _client;
 
     public UserManagementWrapper(
-        IUserManagementAsServiceClient userManagementClient,
-        IMapper mapper)
+        IUserManagementServiceClient userManagementClient,
+        IAuthenticationHeaderAccessor authenticationHeaderAccessor,
+        IMapper mapper) : base(
+            userManagementClient,
+            authenticationHeaderAccessor)
     {
-        _userManagementClient = userManagementClient;
+        _client = userManagementClient;
         _mapper = mapper;
     }
 
@@ -29,10 +33,10 @@ public class UserManagementWrapper : BaseSwaggerWrapper, IUserManagementWrapper
 
         return await ExecuteSafelyAsync(async () =>
         {
-            var response = await _userManagementClient.CreateAsync(createCommand);
+            var response = await _client.CreateAsync(createCommand);
 
             return _mapper.Map<Common.DTOs.UserDto>(response);
-        });
+        }, AuthorizationType.Service);
 
     }
 
@@ -45,10 +49,10 @@ public class UserManagementWrapper : BaseSwaggerWrapper, IUserManagementWrapper
 
         return await ExecuteSafelyAsync(async () =>
         {
-            var response = await _userManagementClient.GetByIdAsync(query);
+            var response = await _client.GetByIdAsync(query);
 
             return _mapper.Map<Common.DTOs.UserDto>(response);
-        });
+        }, AuthorizationType.Service);
     }
 
     public async Task<Common.DTOs.UserDto> GetUserByLoginAsync(string login)
@@ -60,9 +64,9 @@ public class UserManagementWrapper : BaseSwaggerWrapper, IUserManagementWrapper
 
         return await ExecuteSafelyAsync(async () =>
         {
-            var response = await _userManagementClient.GetByLoginAsync(query);
+            var response = await _client.GetByLoginAsync(query);
 
             return _mapper.Map<Common.DTOs.UserDto>(response);
-        });
+        }, AuthorizationType.Service);
     }
 }

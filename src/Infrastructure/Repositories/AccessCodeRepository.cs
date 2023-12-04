@@ -27,6 +27,6 @@ public class AccessCodeRepository : MongoRepository<AccessCode>, IAccessCodeRepo
 
     public async Task<AccessCode> UpdateAccessCodeAsync(UpdateModelRequest<AccessCode> request)
     {
-        return await UpdateItemAsync(request.ModelId, request.BuildUpdateDefinition());
+        return await UpdateItemAsync(request);
     }
 }

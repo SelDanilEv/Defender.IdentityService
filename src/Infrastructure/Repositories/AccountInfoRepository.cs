@@ -25,6 +25,6 @@ public class AccountInfoRepository : MongoRepository<AccountInfo>, IAccountInfoR
 
     public async Task<AccountInfo> UpdateAccountInfoAsync(UpdateModelRequest<AccountInfo> updateModelRequest)
     {
-        return await UpdateItemAsync(updateModelRequest.ModelId, updateModelRequest.BuildUpdateDefinition());
+        return await UpdateItemAsync(updateModelRequest);
     }
 }

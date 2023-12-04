@@ -70,7 +70,7 @@ public sealed class CreateAccountCommandHandler : IRequestHandler<CreateAccountC
 
         var accountInfo = await _accountManagementService.GetOrCreateAccountAsync(response.UserInfo.Id, request.Password);
 
-        await _accountVerificationService.SendVerificationEmailAsync(response.UserInfo.Id).ConfigureAwait(false);
+        _accountVerificationService.SendVerificationEmailAsync(response.UserInfo.Id).ConfigureAwait(false);
 
         response.AccountInfo = _mapper.Map<AccountDto>(accountInfo);
 

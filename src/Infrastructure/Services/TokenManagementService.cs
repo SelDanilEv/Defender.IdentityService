@@ -42,7 +42,9 @@ public class TokenManagementService : ITokenManagementService
             claims.Add(new Claim(ClaimTypes.Role, role));
         }
 
-        var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretsHelper.GetSecret(Secret.JwtSecret)));
+        var key = new SymmetricSecurityKey(
+            Encoding.ASCII.GetBytes(
+                await SecretsHelper.GetSecretAsync(Secret.JwtSecret)));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(

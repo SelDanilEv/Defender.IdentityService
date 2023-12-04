@@ -9,8 +9,6 @@ public static class ServiceOptionsExtensions
 {
     public static IServiceCollection AddApplicationOptions(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddCommonOptions(configuration);
-
         services.Configure<GoogleOptions>(configuration.GetSection(nameof(GoogleOptions)));
 
         services.Configure<UserManagementOptions>(configuration.GetSection(nameof(UserManagementOptions)));

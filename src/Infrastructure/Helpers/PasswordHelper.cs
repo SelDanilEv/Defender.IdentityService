@@ -6,9 +6,9 @@ namespace Defender.IdentityService.Infrastructure.Helpers;
 
 public class PasswordHelper
 {
-    public static string HashPassword(string password)
-        => EncryptionUtils.GetHashSHA256(password, SecretsHelper.GetSecret(Secret.HashSalt));
+    public static async Task<string> HashPassword(string password)
+        => EncryptionUtils.GetHashSHA256(password, await SecretsHelper.GetSecretAsync(Secret.HashSalt));
 
-    public static bool CheckPassword(string password, string hash)
-        => hash == EncryptionUtils.GetHashSHA256(password, SecretsHelper.GetSecret(Secret.HashSalt));
+    public static async Task<bool> CheckPassword(string password, string hash)
+        => hash == EncryptionUtils.GetHashSHA256(password, await SecretsHelper.GetSecretAsync(Secret.HashSalt));
 }

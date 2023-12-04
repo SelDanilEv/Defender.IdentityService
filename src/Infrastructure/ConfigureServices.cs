@@ -1,8 +1,6 @@
-﻿using System.Net.Http.Headers;
-using System.Reflection;
+﻿using System.Reflection;
 using Defender.Common.Clients.Notification;
 using Defender.Common.Clients.UserManagement;
-using Defender.Common.Helpers;
 using Defender.IdentityService.Application.Common.Interfaces;
 using Defender.IdentityService.Application.Common.Interfaces.Repositories;
 using Defender.IdentityService.Application.Common.Interfaces.Wrapper;
@@ -67,24 +65,16 @@ public static class ConfigureServices
             client.BaseAddress = new Uri(serviceProvider.GetRequiredService<IOptions<GoogleOptions>>().Value.Url);
         });
 
-        services.RegisterUserManagementAsServiceClient(
+        services.RegisterUserManagementClient(
             (serviceProvider, client) =>
             {
                 client.BaseAddress = new Uri(serviceProvider.GetRequiredService<IOptions<UserManagementOptions>>().Value.Url);
-                client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue(
-                    "Bearer",
-                    InternalJwtHelper.GenerateInternalJWT(configuration["JwtTokenIssuer"]));
             });
 
-        services.RegisterNotificationAsServiceClient(
+        services.RegisterNotificationClient(
             (serviceProvider, client) =>
             {
                 client.BaseAddress = new Uri(serviceProvider.GetRequiredService<IOptions<NotificationOptions>>().Value.Url);
-                client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue(
-                    "Bearer",
-                    InternalJwtHelper.GenerateInternalJWT(configuration["JwtTokenIssuer"]));
             });
     }
 

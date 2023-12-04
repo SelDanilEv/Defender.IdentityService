@@ -29,7 +29,7 @@ public class AccountManagementService : IAccountManagementService
 
         if (accountInfo == null)
         {
-            accountInfo = CreateDefaultUserAccount(accountId, password);
+            accountInfo = await CreateDefaultUserAccount(accountId, password);
 
             accountInfo = await _accountInfoRepository.CreateAccountInfoAsync(accountInfo);
         }
@@ -41,7 +41,7 @@ public class AccountManagementService : IAccountManagementService
     {
         var accountInfo = await this.GetAccountByIdAsync(accountId);
 
-        if (!PasswordHelper.CheckPassword(password, accountInfo.PasswordHash))
+        if (!await PasswordHelper.CheckPassword(password, accountInfo.PasswordHash))
         {
             throw new ServiceException(ErrorCodeHelper.GetErrorCode(ErrorCode.BR_ACC_InvalidPassword));
         }
@@ -55,7 +55,7 @@ public class AccountManagementService : IAccountManagementService
             .Init(accountId);
 
         updateRequest
-            .UpdateField(x => x.PasswordHash, PasswordHelper.HashPassword(newPassword));
+            .UpdateField(x => x.PasswordHash, await PasswordHelper.HashPassword(newPassword));
 
         await _accountInfoRepository.UpdateAccountInfoAsync(updateRequest);
     }
@@ -71,11 +71,11 @@ public class AccountManagementService : IAccountManagementService
         await _accountInfoRepository.UpdateAccountInfoAsync(updateRequest);
     }
 
-    private AccountInfo CreateDefaultUserAccount(Guid accountId, string password)
+    private async Task<AccountInfo> CreateDefaultUserAccount(Guid accountId, string password)
     {
         var passwordHash = string.IsNullOrWhiteSpace(password) ?
-                                PasswordHelper.HashPassword(accountId.ToString()) :
-                                PasswordHelper.HashPassword(password);
+                                await PasswordHelper.HashPassword(accountId.ToString()) :
+                                await PasswordHelper.HashPassword(password);
 
         return new AccountInfo()
         {
