@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <RootNamespace>Defender.IdentityService.Domain</RootNamespace>
         <AssemblyName>Defender.IdentityService.Domain</AssemblyName>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -9,13 +9,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Defender.Common" Version="1.1.39" />
+        <PackageReference Include="Defender.Common" Version="1.2.0" />
         <PackageReference Include="MediatR" Version="12.1.1" />
         <PackageReference Include="MongoDB.Bson" Version="2.21.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <!-- <ProjectReference Include="..\..\..\Defender.Common\src\Defender.Common\Defender.Common.csproj" /> -->
+         <!-- <ProjectReference Include="..\..\..\Defender.Common\src\Defender.Common\Defender.Common.csproj" />  -->
     </ItemGroup>
 
 </Project>

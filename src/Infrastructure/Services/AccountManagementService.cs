@@ -1,4 +1,5 @@
-﻿using Defender.Common.Errors;
+﻿using Defender.Common.DB.Model;
+using Defender.Common.Errors;
 using Defender.Common.Exceptions;
 using Defender.Common.Models;
 using Defender.IdentityService.Application.Common.Interfaces;

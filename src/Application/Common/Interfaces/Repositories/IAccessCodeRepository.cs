@@ -1,4 +1,4 @@
-﻿using Defender.Common.Models;
+﻿using Defender.Common.DB.Model;
 using Defender.IdentityService.Domain.Entities;
 
 namespace Defender.IdentityService.Application.Common.Interfaces.Repositories;

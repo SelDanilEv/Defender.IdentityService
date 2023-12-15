@@ -1,6 +1,6 @@
 ﻿using Defender.Common.Errors;
 using Defender.Common.Exceptions;
-using Defender.Common.Models;
+using Defender.Common.DB.Model;
 using Defender.IdentityService.Application.Common.Interfaces;
 using Defender.IdentityService.Application.Common.Interfaces.Repositories;
 using Defender.IdentityService.Domain.Entities;
@@ -11,7 +11,6 @@ namespace Defender.IdentityService.Infrastructure.Services;
 public class AccessCodeService : IAccessCodeService
 {
     private readonly IAccessCodeRepository _accessCodeRepository;
-
 
     public AccessCodeService(
         IAccessCodeRepository accessCodeRepository)

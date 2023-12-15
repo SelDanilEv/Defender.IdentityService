@@ -1,13 +1,13 @@
 ﻿using Defender.Common.Configuration.Options;
-using Defender.Common.Models;
-using Defender.Common.Repositories;
+using Defender.Common.DB.Model;
+using Defender.Common.DB.Repositories;
 using Defender.IdentityService.Application.Common.Interfaces.Repositories;
 using Defender.IdentityService.Domain.Entities;
 using Microsoft.Extensions.Options;
 
 namespace Defender.IdentityService.Infrastructure.Repositories.AccountInfos;
 
-public class AccountInfoRepository : MongoRepository<AccountInfo>, IAccountInfoRepository
+public class AccountInfoRepository : BaseMongoRepository<AccountInfo>, IAccountInfoRepository
 {
     public AccountInfoRepository(IOptions<MongoDbOptions> mongoOption) : base(mongoOption.Value)
     {

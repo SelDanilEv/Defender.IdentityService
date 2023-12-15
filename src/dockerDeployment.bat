@@ -5,4 +5,5 @@ docker run -d --name IdentityService -p 49050:80 ^
 -e ASPNETCORE_ENVIRONMENT=DockerDev ^
 -it identity-service
 echo finish identity-service
+docker image prune -f
 pause
