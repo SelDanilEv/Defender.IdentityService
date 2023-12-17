@@ -15,9 +15,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+
 
 namespace Defender.IdentityService.WebApi;
 
@@ -115,9 +115,9 @@ public static class ConfigureServices
         return services;
     }
 
-    private static void ConfigureProblemDetails(ProblemDetailsOptions options, IWebHostEnvironment environment)
+    private static void ConfigureProblemDetails(Hellang.Middleware.ProblemDetails.ProblemDetailsOptions options, IWebHostEnvironment environment)
     {
-        options.IncludeExceptionDetails = (ctx, ex) => environment.IsEnvironment("Development") || environment.IsEnvironment("DockerDev");
+        options.IncludeExceptionDetails = (ctx, ex) => environment.IsLocalOrDevelopment();
 
         options.Map<ValidationException>(exception =>
         {

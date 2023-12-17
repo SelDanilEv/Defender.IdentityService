@@ -1,5 +1,6 @@
 ﻿using Defender.Common.Enums;
 using Defender.Common.Helpers;
+using Defender.IdentityService.Infrastructure.Helpers.LocalSecretHelper;
 using Defender.Utils;
 
 namespace Defender.IdentityService.Infrastructure.Helpers;
@@ -7,8 +8,8 @@ namespace Defender.IdentityService.Infrastructure.Helpers;
 public class PasswordHelper
 {
     public static async Task<string> HashPassword(string password)
-        => EncryptionUtils.GetHashSHA256(password, await SecretsHelper.GetSecretAsync(Secret.HashSalt));
+        => EncryptionUtils.GetHashSHA256(password, await LocalSecretsHelper.GetSecretAsync(LocalSecret.HashSalt));
 
     public static async Task<bool> CheckPassword(string password, string hash)
-        => hash == EncryptionUtils.GetHashSHA256(password, await SecretsHelper.GetSecretAsync(Secret.HashSalt));
+        => hash == EncryptionUtils.GetHashSHA256(password, await LocalSecretsHelper.GetSecretAsync(LocalSecret.HashSalt));
 }
