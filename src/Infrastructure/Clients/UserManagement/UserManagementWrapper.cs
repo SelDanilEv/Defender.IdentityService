@@ -42,14 +42,9 @@ public class UserManagementWrapper : BaseInternalSwaggerWrapper, IUserManagement
 
     public async Task<Common.DTOs.UserDto> GetUserByIdAsync(Guid userId)
     {
-        var query = new GetUserByIdQuery()
-        {
-            UserId = userId,
-        };
-
         return await ExecuteSafelyAsync(async () =>
         {
-            var response = await _client.GetByIdAsync(query);
+            var response = await _client.GetByIdAsync(userId);
 
             return _mapper.Map<Common.DTOs.UserDto>(response);
         }, AuthorizationType.Service);
@@ -57,16 +52,19 @@ public class UserManagementWrapper : BaseInternalSwaggerWrapper, IUserManagement
 
     public async Task<Common.DTOs.UserDto> GetUserByLoginAsync(string login)
     {
-        var query = new GetUserByLoginQuery()
-        {
-            Login = login,
-        };
-
         return await ExecuteSafelyAsync(async () =>
         {
-            var response = await _client.GetByLoginAsync(query);
+            var response = await _client.GetByLoginAsync(login);
 
             return _mapper.Map<Common.DTOs.UserDto>(response);
+        }, AuthorizationType.Service);
+    }
+
+    public async Task<bool> CheckIfEmailTakenAsync(string email)
+    {
+        return await ExecuteSafelyAsync(async () =>
+        {
+            return await _client.IsEmailTakenAsync(email);
         }, AuthorizationType.Service);
     }
 }

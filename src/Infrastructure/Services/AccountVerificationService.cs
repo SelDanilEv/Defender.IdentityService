@@ -1,34 +1,27 @@
 ﻿using Defender.Common.Errors;
 using Defender.Common.Exceptions;
-using Defender.Common.DB.Model;
 using Defender.IdentityService.Application.Common.Interfaces;
-using Defender.IdentityService.Application.Common.Interfaces.Repositories;
 using Defender.IdentityService.Application.Common.Interfaces.Wrapper;
-using Defender.IdentityService.Domain.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
 namespace Defender.IdentityService.Infrastructure.Services;
 
 public class AccountVerificationService : IAccountVerificationService
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly INotificationWrapper _notificationWrapper;
     private readonly IUserManagementService _userManagementService;
-    private readonly IAccountInfoRepository _accountInfoRepository;
+    private readonly IAccountManagementService _accountManagementService;
     private readonly IAccessCodeService _accessCodeService;
     private readonly IConfiguration _configuration;
 
     public AccountVerificationService(
-        IHttpContextAccessor httpContextAccessor,
         INotificationWrapper notificationWrapper,
         IUserManagementService userManagementService,
-        IAccountInfoRepository accountInfoRepository,
+        IAccountManagementService accountManagementService,
         IAccessCodeService accessCodeService,
         IConfiguration configuration)
     {
-        _accountInfoRepository = accountInfoRepository;
-        _httpContextAccessor = httpContextAccessor;
+        _accountManagementService = accountManagementService;
         _accessCodeService = accessCodeService;
         _userManagementService = userManagementService;
         _notificationWrapper = notificationWrapper;
@@ -42,19 +35,18 @@ public class AccountVerificationService : IAccountVerificationService
 
         var verificationLink = CreateVerificationLink(accessCode.Hash, accessCode.Code);
 
-        return await _notificationWrapper.SendEmailVerificationAsync(userInfo.Email, verificationLink);
+        return await _notificationWrapper
+            .SendEmailVerificationAsync(userInfo.Email, verificationLink);
     }
 
-    public async Task<AccountInfo> VerifyEmailAsync(int hash, int code)
+    public async Task VerifyEmailAsync(int hash, int code)
     {
         var (isVerified, userId) = await _accessCodeService.VerifyAccessCode(hash, code);
 
         if (isVerified)
         {
-            var updateRequest = UpdateModelRequest<AccountInfo>.Init(userId)
-                                    .UpdateField(a => a.IsEmailVerified, true);
-
-            return await _accountInfoRepository.UpdateAccountInfoAsync(updateRequest);
+            await _accountManagementService
+                .UpdateEmailVerificationAsync(userId, true);
         }
         else
         {
@@ -62,7 +54,7 @@ public class AccountVerificationService : IAccountVerificationService
         }
     }
 
-    private string CreateVerificationLink(int hash, int code) => 
+    private string CreateVerificationLink(int hash, int code) =>
         String.Format(_configuration["VerificationEmailLinkTemplate"],
                 hash,
                 code);

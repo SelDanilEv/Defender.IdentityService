@@ -44,13 +44,14 @@ public class AccountManagementService : IAccountManagementService
 
         if (!await PasswordHelper.CheckPassword(password, accountInfo.PasswordHash))
         {
-            throw new ServiceException(ErrorCodeHelper.GetErrorCode(ErrorCode.BR_ACC_InvalidPassword));
+            throw new ServiceException(
+                ErrorCodeHelper.GetErrorCode(ErrorCode.BR_ACC_InvalidPassword));
         }
 
         return accountInfo;
     }
 
-    public async Task ChangePasswordAsync(Guid accountId, string newPassword)
+    public async Task<AccountInfo> ChangePasswordAsync(Guid accountId, string newPassword)
     {
         var updateRequest = UpdateModelRequest<AccountInfo>
             .Init(accountId);
@@ -58,10 +59,21 @@ public class AccountManagementService : IAccountManagementService
         updateRequest
             .UpdateField(x => x.PasswordHash, await PasswordHelper.HashPassword(newPassword));
 
-        await _accountInfoRepository.UpdateAccountInfoAsync(updateRequest);
+        return await _accountInfoRepository.UpdateAccountInfoAsync(updateRequest);
     }
 
-    public async Task BlockAsync(Guid accountId, bool doBlockUser)
+    public async Task<AccountInfo> UpdateEmailVerificationAsync(
+        Guid accountId, bool isEmailVerified)
+    {
+        var updateRequest = UpdateModelRequest<AccountInfo>
+            .Init(accountId);
+
+        updateRequest.UpdateField(x => x.IsEmailVerified, isEmailVerified);
+
+        return await _accountInfoRepository.UpdateAccountInfoAsync(updateRequest);
+    }
+
+    public async Task<AccountInfo> BlockAsync(Guid accountId, bool doBlockUser)
     {
         var updateRequest = UpdateModelRequest<AccountInfo>
             .Init(accountId);
@@ -69,7 +81,7 @@ public class AccountManagementService : IAccountManagementService
         updateRequest
             .UpdateField(x => x.IsBlocked, doBlockUser);
 
-        await _accountInfoRepository.UpdateAccountInfoAsync(updateRequest);
+        return await _accountInfoRepository.UpdateAccountInfoAsync(updateRequest);
     }
 
     private async Task<AccountInfo> CreateDefaultUserAccount(Guid accountId, string password)

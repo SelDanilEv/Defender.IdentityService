@@ -1,4 +1,5 @@
-﻿using Defender.IdentityService.Application.Common.Interfaces;
+﻿using Defender.Common.Exceptions;
+using Defender.IdentityService.Application.Common.Interfaces;
 using Defender.IdentityService.Application.Common.Interfaces.Wrapper;
 
 using UserDto = Defender.Common.DTOs.UserDto;
@@ -37,15 +38,15 @@ public class UserManagementService : IUserManagementService
     {
         var googleUser = await _googleTokenParsingService.GetGoogleUserAsync(token);
 
-        var user = await _userManagementWrapper.GetUserByLoginAsync(googleUser.Email);
-
-        if (user == null)
+        if (await _userManagementWrapper.CheckIfEmailTakenAsync(googleUser.Email))
         {
-            user = await _userManagementWrapper.CreateUserAsync(
-                CreateUser(googleUser.Email, String.Empty, googleUser.Name));
-        };
-
-        return user;
+            return await _userManagementWrapper.GetUserByLoginAsync(googleUser.Email);
+        }
+        else
+        {
+            return await _userManagementWrapper.CreateUserAsync(
+                CreateUser(googleUser.Email, String.Empty, googleUser.GivenName + googleUser.Id));
+        }
     }
 
     private UserDto CreateUser(string email, string phoneNumber, string nickname)

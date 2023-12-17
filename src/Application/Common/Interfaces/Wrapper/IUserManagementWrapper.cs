@@ -5,5 +5,6 @@ public interface IUserManagementWrapper
 {
     Task<UserDto> GetUserByIdAsync(Guid userId);
     Task<UserDto> GetUserByLoginAsync(string login);
+    Task<bool> CheckIfEmailTakenAsync(string email);
     Task<UserDto> CreateUserAsync(UserDto user);
 }

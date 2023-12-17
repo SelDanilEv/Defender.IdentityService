@@ -43,13 +43,20 @@ public sealed class LoginGoogleCommandHandler : IRequestHandler<LoginGoogleComma
         _mapper = mapper;
     }
 
-    public async Task<LoginResponse> Handle(LoginGoogleCommand request, CancellationToken cancellationToken)
+    public async Task<LoginResponse> Handle(
+        LoginGoogleCommand request,
+        CancellationToken cancellationToken)
     {
         var response = new LoginResponse();
 
-        response.UserInfo = await _userManagementService.CreateOrGetUserByGoogleTokenAsync(request.Token);
+        response.UserInfo = await _userManagementService
+            .CreateOrGetUserByGoogleTokenAsync(request.Token);
 
-        var accountInfo = await _accountManagementService.GetOrCreateAccountAsync(response.UserInfo.Id);
+        var accountInfo = await _accountManagementService
+            .GetOrCreateAccountAsync(response.UserInfo.Id);
+
+        accountInfo = await _accountManagementService
+            .UpdateEmailVerificationAsync(accountInfo.Id, true);
 
         if (accountInfo?.IsBlocked ?? false)
         {
