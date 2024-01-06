@@ -3,5 +3,6 @@
 public enum AccessCodeType
 {
     Universal,
+    UpdateAccount,
     EmailVerification,
 }

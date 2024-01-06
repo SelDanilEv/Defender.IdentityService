@@ -25,6 +25,13 @@ public class AccessCodeRepository : BaseMongoRepository<AccessCode>, IAccessCode
         return await GetItemAsync(findRequest);
     }
 
+    public async Task<AccessCode> GetAccessCodeByUserIdAsync(Guid userId)
+    {
+        var findRequest = FindModelRequest<AccessCode>.Init(a => a.UserId, userId);
+
+        return await GetItemAsync(findRequest);
+    }
+
     public async Task<AccessCode> UpdateAccessCodeAsync(UpdateModelRequest<AccessCode> request)
     {
         return await UpdateItemAsync(request);

@@ -18,6 +18,15 @@ public class AccountController : BaseApiController
     {
     }
 
+    [HttpGet("details")]
+    [Auth(Roles.User)]
+    [ProducesResponseType(typeof(AccountDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    public async Task<AccountDto> CheckAccountVerificationUserAsync([FromQuery] GetCurrentAccountDetailsQuery query)
+    {
+        return await ProcessApiCallAsync<GetCurrentAccountDetailsQuery, AccountDto>(query);
+    }
+
     [HttpPost("google")]
     [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
@@ -42,7 +51,16 @@ public class AccountController : BaseApiController
         return await ProcessApiCallWithoutMappingAsync<CreateAccountCommand, LoginResponse>(createCommand);
     }
 
-    [HttpPost("password/change")]
+    [HttpPut("update")]
+    [Auth(Roles.Admin)]
+    [ProducesResponseType(typeof(AccountDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    public async Task<AccountDto> UpdateAccountAsync([FromBody] UpdateAccountCommand updateAccountCommand)
+    {
+        return await ProcessApiCallAsync<UpdateAccountCommand, AccountDto>(updateAccountCommand);
+    }
+
+    [HttpPut("password/change")]
     [Auth(Roles.User)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
@@ -51,7 +69,7 @@ public class AccountController : BaseApiController
         await ProcessApiCallAsync(changeUserPasswordCommand);
     }
 
-    [HttpPost("block")]
+    [HttpPut("block")]
     [Auth(Roles.Admin)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
@@ -60,13 +78,11 @@ public class AccountController : BaseApiController
         await ProcessApiCallAsync(blockUserCommand);
     }
 
-    [HttpGet("details")]
-    [Auth(Roles.User)]
-    [ProducesResponseType(typeof(AccountDto), StatusCodes.Status200OK)]
+    [HttpPost("verify/email")]
+    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-    public async Task<AccountDto> CheckAccountVerificationUserAsync([FromQuery] GetCurrentAccountDetailsQuery query)
+    public async Task<bool> VerifyEmailAsync([FromBody] VerifyEmailCommand command)
     {
-        return await ProcessApiCallAsync<GetCurrentAccountDetailsQuery, AccountDto>(query);
+        return await ProcessApiCallWithoutMappingAsync<VerifyEmailCommand, bool>(command);
     }
-
 }

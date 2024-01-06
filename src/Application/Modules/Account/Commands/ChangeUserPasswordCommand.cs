@@ -1,6 +1,4 @@
 ﻿using Defender.Common.Errors;
-using Defender.Common.Exceptions;
-using Defender.Common.Interfaces;
 using Defender.IdentityService.Application.Common.Interfaces;
 using FluentValidation;
 using MediatR;
@@ -29,50 +27,18 @@ public sealed class ChangeUserPasswordCommandValidator : AbstractValidator<Chang
 
 public sealed class ChangeUserPasswordCommandHandler : IRequestHandler<ChangeUserPasswordCommand, Unit>
 {
-    private readonly IAccountAccessor _accountAccessor;
     private readonly IAccountManagementService _accountManagementService;
 
     public ChangeUserPasswordCommandHandler(
-        IAccountAccessor accountAccessor,
         IAccountManagementService accountManagementService
         )
     {
-        _accountAccessor = accountAccessor;
         _accountManagementService = accountManagementService;
     }
 
     public async Task<Unit> Handle(ChangeUserPasswordCommand request, CancellationToken cancellationToken)
     {
-        var userAccount = await _accountManagementService.GetOrCreateAccountAsync(request.AccountId);
-
-        var currentUser = _accountAccessor.AccountInfo;
-
-        if (currentUser.IsSuperAdmin)
-        {
-            await _accountManagementService.ChangePasswordAsync(request.AccountId, request.NewPassword);
-        }
-        else if (currentUser.IsAdmin)
-        {
-            if (userAccount.Id == currentUser.Id || !userAccount.IsAdmin)
-            {
-                await _accountManagementService.ChangePasswordAsync(request.AccountId, request.NewPassword);
-            }
-            else
-            {
-                throw new ForbiddenAccessException(ErrorCode.BR_ACC_AdminCannotChangeAdminPassword);
-            }
-        }
-        else
-        {
-            if (userAccount.Id == currentUser.Id)
-            {
-                await _accountManagementService.ChangePasswordAsync(request.AccountId, request.NewPassword);
-            }
-            else
-            {
-                throw new ForbiddenAccessException(ErrorCode.BR_ACC_UserCanUpdateOnlyOwnAccount);
-            }
-        }
+        await _accountManagementService.ChangePasswordAsync(request.AccountId, request.NewPassword);
 
         return Unit.Value;
     }

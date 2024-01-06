@@ -1,4 +1,5 @@
 ﻿using Defender.Common.Entities;
+using Defender.IdentityService.Domain.Consts;
 using Defender.IdentityService.Domain.Enum;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
@@ -12,14 +13,14 @@ public class AccessCode : IBaseModel
 
     public Guid UserId { get; set; }
     public int Hash { get; set; }
-    public int Code { get; set; } = new Random().Next(999999);
+    public int Code { get; set; } = new Random().Next(Constants.AccessCodeMinValue, Constants.AccessCodeMaxValue);
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
-    public TimeSpan ValidTime { get; set; } = TimeSpan.FromMinutes(2);
+    public TimeSpan ValidTime { get; set; } = TimeSpan.FromMinutes(Constants.AccessCodeDefaultValidTimeMinutes);
     [BsonRepresentation(BsonType.String)]
     public AccessCodeType Type { get; set; } = AccessCodeType.Universal;
     [BsonRepresentation(BsonType.String)]
     public AccessCodeStatus Status { get; set; } = AccessCodeStatus.Active;
-    public int AttemptsLeft { get; set; } = 3;
+    public int AttemptsLeft { get; set; } = Constants.AccessCodeDefaultAttemts;
     public DateTime ExpirationDate => CreatedDate.Add(ValidTime);
     public bool IsExpired => ExpirationDate < DateTime.UtcNow;
 
@@ -35,11 +36,15 @@ public class AccessCode : IBaseModel
 
     public static AccessCode Default => new AccessCode(Guid.Empty);
 
-    public static AccessCode CreateEmailVerification(Guid userId) => new AccessCode(userId)
-    {
-        ValidTime = TimeSpan.FromMinutes(10),
-        Type = AccessCodeType.EmailVerification,
-    };
+    public static AccessCode CreateAccessCode(
+        Guid userId,
+        AccessCodeType accessCodeType = AccessCodeType.Universal,
+        int validTimeMinutes = Constants.AccessCodeDefaultValidTimeMinutes)
+            => new AccessCode(userId)
+        {
+            ValidTime = TimeSpan.FromMinutes(validTimeMinutes),
+            Type = accessCodeType,
+        };
 }
 
 

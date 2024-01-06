@@ -23,42 +23,46 @@ public static class ConfigureServices
     {
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
-        RegisterServices(services);
-
-        RegisterRepositories(services);
-
-        RegisterApiClients(services, configuration);
-
-        RegisterClientWrappers(services);
+        services
+            .RegisterServices()
+            .RegisterRepositories()
+            .RegisterApiClients(configuration)
+            .RegisterClientWrappers();
 
         return services;
     }
 
-    private static void RegisterClientWrappers(IServiceCollection services)
+    private static IServiceCollection RegisterClientWrappers(this IServiceCollection services)
     {
         services.AddTransient<IUserManagementWrapper, UserManagementWrapper>();
         services.AddTransient<INotificationWrapper, NotificationWrapper>();
+
+        return services;
     }
 
-    private static void RegisterServices(IServiceCollection services)
+    private static IServiceCollection RegisterServices(this IServiceCollection services)
     {
-        services.AddTransient<IAccountVerificationService, AccountVerificationService>();
+        services.AddTransient<INotificationService, NotificationService>();
         services.AddTransient<IAccessCodeService, AccessCodeService>();
         services.AddTransient<IAccountManagementService, AccountManagementService>();
         services.AddTransient<ITokenManagementService, TokenManagementService>();
         services.AddTransient<IGoogleTokenParsingService, GoogleTokenParsingService>();
         services.AddTransient<ILoginHistoryService, LoginHistoryService>();
         services.AddTransient<IUserManagementService, UserManagementService>();
+
+        return services;
     }
 
-    private static void RegisterRepositories(IServiceCollection services)
+    private static IServiceCollection RegisterRepositories(this IServiceCollection services)
     {
         services.AddSingleton<IAccessCodeRepository, AccessCodeRepository>();
         services.AddSingleton<IAccountInfoRepository, AccountInfoRepository>();
         services.AddSingleton<ILoginRecordRepository, LoginRecordRepository>();
+
+        return services;
     }
 
-    private static void RegisterApiClients(IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection RegisterApiClients(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddHttpClient<IGoogleClient, GoogleClient>(nameof(GoogleClient), (serviceProvider, client) =>
         {
@@ -76,6 +80,8 @@ public static class ConfigureServices
             {
                 client.BaseAddress = new Uri(serviceProvider.GetRequiredService<IOptions<NotificationOptions>>().Value.Url);
             });
+
+        return services;
     }
 
 }

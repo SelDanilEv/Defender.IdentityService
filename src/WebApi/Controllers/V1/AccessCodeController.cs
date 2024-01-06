@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Defender.IdentityService.Application.Modules.Account.Commands;
 using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using Defender.Common.Attributes;
 using Defender.Common.Models;
+using Defender.IdentityService.Application.Modules.Verification.Commands;
 
 namespace Defender.IdentityService.WebApi.Controllers.V1;
 
@@ -15,13 +15,22 @@ public class AccessCodeController : BaseApiController
     {
     }
 
-    [HttpPost("block")]
+    [HttpPost("send/email")]
     [Auth(Roles.Admin)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-    public async Task BlockUserAsync([FromBody] BlockUserCommand blockUserCommand)
+    public async Task SendAccessCodeByEmailAsync([FromBody] SendVerificationCodeCommand command)
     {
-        await ProcessApiCallAsync(blockUserCommand);
+        await ProcessApiCallAsync(command);
+    }
+
+    [HttpPost("verify")]
+    [Auth(Roles.User)]
+    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    public async Task<bool> VerifyAccessCodeAsync([FromBody] VerifyCodeCommand command)
+    {
+        return await ProcessApiCallAsync<VerifyCodeCommand,bool>(command);
     }
 
 }

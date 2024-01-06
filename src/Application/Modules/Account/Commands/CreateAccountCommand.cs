@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Defender.Common.DTOs;
 using Defender.Common.Errors;
+using Defender.Common.Exstension;
 using Defender.IdentityService.Application.Common.Interfaces;
 using Defender.IdentityService.Application.Models.LoginResponse;
+using Defender.IdentityService.Domain.Enum;
 using FluentValidation;
 using MediatR;
 
@@ -21,21 +23,29 @@ public sealed class CreateAccountCommandValidator : AbstractValidator<CreateAcco
     public CreateAccountCommandValidator()
     {
         RuleFor(s => s.Email)
-                  .NotEmpty().WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_EmptyEmail))
-                  .EmailAddress().WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_InvalidEmail));
+                  .NotEmpty()
+                    .WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_EmptyEmail))
+                  .EmailAddress()
+                    .WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_InvalidEmail));
 
         RuleFor(p => p.Password)
-                  .NotEmpty().WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_EmptyPassword))
-                  .MinimumLength(ValidationConstants.MinPasswordLength).WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_MinPasswordLength))
-                  .MaximumLength(ValidationConstants.MaxPasswordLength).WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_MaxPasswordLength));
+                  .NotEmpty()
+                    .WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_EmptyPassword))
+                  .MinimumLength(ValidationConstants.MinPasswordLength)
+                    .WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_MinPasswordLength))
+                  .MaximumLength(ValidationConstants.MaxPasswordLength)
+                    .WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_MaxPasswordLength));
 
-        RuleFor(p => p.PhoneNumber)
-                  .Matches(ValidationConstants.PhoneNumberRegex).WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_InvalidPhoneNumber));
+        //RuleFor(p => p.PhoneNumber)
+        //          .Matches(ValidationConstants.PhoneNumberRegex).WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_InvalidPhoneNumber));
 
         RuleFor(x => x.Nickname)
-                  .NotEmpty().WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_EmptyNickname))
-                  .MinimumLength(ValidationConstants.MinNicknameLength).WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_MinNicknameLength))
-                  .MaximumLength(ValidationConstants.MaxNicknameLength).WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_MaxNicknameLength));
+                  .NotEmpty()
+                    .WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_EmptyNickname))
+                  .MinimumLength(ValidationConstants.MinNicknameLength)
+                    .WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_MinNicknameLength))
+                  .MaximumLength(ValidationConstants.MaxNicknameLength)
+                    .WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_MaxNicknameLength));
     }
 }
 
@@ -44,33 +54,49 @@ public sealed class CreateAccountCommandHandler : IRequestHandler<CreateAccountC
     private readonly IUserManagementService _userManagementService;
     private readonly IAccountManagementService _accountManagementService;
     private readonly ITokenManagementService _tokenManagementService;
-    private readonly IAccountVerificationService _accountVerificationService;
+    private readonly INotificationService _notificationService;
+    private readonly IAccessCodeService _accessCodeService;
     private readonly IMapper _mapper;
 
     public CreateAccountCommandHandler(
         IUserManagementService userManagementService,
         IAccountManagementService accountManagementService,
-        IAccountVerificationService accountVerificationService,
+        INotificationService notificationService,
+        IAccessCodeService accessCodeService,
         ITokenManagementService tokenManagementService,
         IMapper mapper
         )
     {
         _userManagementService = userManagementService;
         _accountManagementService = accountManagementService;
-        _accountVerificationService = accountVerificationService;
+        _notificationService = notificationService;
+        _accessCodeService = accessCodeService;
         _tokenManagementService = tokenManagementService;
         _mapper = mapper;
     }
 
-    public async Task<LoginResponse> Handle(CreateAccountCommand request, CancellationToken cancellationToken)
+    public async Task<LoginResponse> Handle(
+        CreateAccountCommand request, 
+        CancellationToken cancellationToken)
     {
         var response = new LoginResponse();
 
-        response.UserInfo = await _userManagementService.CreateUserAsync(request.Email, request.PhoneNumber, request.Nickname);
+        request.PhoneNumber = request.PhoneNumber.DigitsOnly();
 
-        var accountInfo = await _accountManagementService.GetOrCreateAccountAsync(response.UserInfo.Id, request.Password);
+        response.UserInfo = await _userManagementService.CreateUserAsync(
+            request.Email,
+            request.PhoneNumber, 
+            request.Nickname);
 
-        _accountVerificationService.SendVerificationEmailAsync(response.UserInfo.Id).ConfigureAwait(false);
+        var accountInfo = await _accountManagementService.GetOrCreateAccountAsync(
+            response.UserInfo.Id, 
+            request.Password);
+
+        var accessCode = await _accessCodeService.CreateAccessCodeAsync(
+            response.UserInfo.Id, 
+            AccessCodeType.EmailVerification);
+
+        await _notificationService.SendVerificationCodeAsync(accessCode);
 
         response.AccountInfo = _mapper.Map<AccountDto>(accountInfo);
 

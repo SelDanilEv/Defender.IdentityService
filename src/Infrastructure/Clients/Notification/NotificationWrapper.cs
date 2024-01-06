@@ -25,17 +25,38 @@ public class NotificationWrapper : BaseInternalSwaggerWrapper, INotificationWrap
 
     public async Task<string> SendEmailVerificationAsync(
         string email,
-        string verificationLink)
+        int hash,
+        int code)
     {
         return await ExecuteSafelyAsync(async () =>
         {
-            var command = new SendVerificationEmailCommand()
+            var command = new SendEmailVerificationCommand()
             {
                 RecipientEmail = email,
-                VerificationLink = verificationLink
+                Hash = hash,
+                Code = code
             };
 
-            var response = await _notificationClient.VerificationEmailAsync(command);
+            var response = await _notificationClient.EmailVerificationAsync(command);
+
+            return response.ExternalNotificationId;
+        }, AuthorizationType.Service);
+
+    }
+
+    public async Task<string> SendVerificationCodeAsync(
+        string email,
+        int code)
+    {
+        return await ExecuteSafelyAsync(async () =>
+        {
+            var command = new SendVerificationCodeCommand()
+            {
+                RecipientEmail = email,
+                Code = code
+            };
+
+            var response = await _notificationClient.VerificationCodeAsync(command);
 
             return response.ExternalNotificationId;
         }, AuthorizationType.Service);

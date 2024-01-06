@@ -4,7 +4,7 @@ using Defender.IdentityService.Application.Common.Interfaces;
 using FluentValidation;
 using MediatR;
 
-namespace Defender.IdentityService.Application.Modules.Verification.Commands;
+namespace Defender.IdentityService.Application.Modules.Account.Commands;
 
 public record VerifyEmailCommand : IRequest<bool>
 {
@@ -26,20 +26,20 @@ public sealed class VerifyEmailCommandValidator : AbstractValidator<VerifyEmailC
 public sealed class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCommand, bool>
 {
     private readonly IAccountAccessor _accountAccessor;
-    private readonly IAccountVerificationService _accountVerificationService;
+    private readonly IAccountManagementService _accountManagementService;
 
     public VerifyEmailCommandHandler(
         IAccountAccessor accountAccessor,
-        IAccountVerificationService accountVerificationService
+        IAccountManagementService accountManagementService
         )
     {
         _accountAccessor = accountAccessor;
-        _accountVerificationService = accountVerificationService;
+        _accountManagementService = accountManagementService;
     }
 
     public async Task<bool> Handle(VerifyEmailCommand request, CancellationToken cancellationToken)
     {
-        await _accountVerificationService.VerifyEmailAsync(request.Hash, request.Code);
+        await _accountManagementService.VerifyEmailAsync(request.Hash, request.Code);
 
         return true;
     }

@@ -18,29 +18,42 @@ public class AccessCodeService : IAccessCodeService
         _accessCodeRepository = accessCodeRepository;
     }
 
-    public async Task<AccessCode> CreateEmailVerificationAccessCodeAsync(Guid accountId)
+    public async Task<AccessCode> CreateAccessCodeAsync(Guid accountId, AccessCodeType accessCodeType)
     {
-        var accessCode = AccessCode.CreateEmailVerification(accountId);
+        var accessCode = AccessCode.CreateAccessCode(accountId, accessCodeType);
 
         return await _accessCodeRepository.CreateAccessCodeAsync(accessCode);
     }
 
-    public async Task<(bool,Guid)> VerifyAccessCode(int hash, int code)
+    public async Task<bool> VerifyAccessCode(Guid accountId, int code)
+    {
+        var accessCode = await _accessCodeRepository.GetAccessCodeByUserIdAsync(accountId);
+
+        return await VerifyAccessCode(accessCode, code);
+    }
+
+    public async Task<(bool, Guid)> VerifyAccessCode(int hash, int code)
     {
         var accessCode = await _accessCodeRepository.GetAccessCodeByHashAsync(hash);
 
+        var isVerified = await VerifyAccessCode(accessCode, code);
+
+        return (isVerified, accessCode.UserId);
+    }
+
+    private async Task<bool> VerifyAccessCode(AccessCode accessCode, int code)
+    {
         if (accessCode == null)
             throw new NotFoundException(ErrorCode.BR_ACC_AccessCodeWasExpired);
 
-        if(!await VerifyCode(accessCode, code))
+        if (!await VerifyCode(accessCode, code))
         {
             ThrowException(accessCode.Status);
-            return (false,Guid.Empty);
+            return false;
         }
 
-        return (true,accessCode.UserId);
+        return true;
     }
-
 
     private async Task<bool> VerifyCode(AccessCode accessCode, int code)
     {

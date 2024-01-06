@@ -1,5 +1,4 @@
-﻿using Defender.Common.Exceptions;
-using Defender.IdentityService.Application.Common.Interfaces;
+﻿using Defender.IdentityService.Application.Common.Interfaces;
 using Defender.IdentityService.Application.Common.Interfaces.Wrapper;
 
 using UserDto = Defender.Common.DTOs.UserDto;
