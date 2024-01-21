@@ -27,26 +27,26 @@ public class AccessCodeService : IAccessCodeService
 
     public async Task<bool> VerifyAccessCode(Guid accountId, int code)
     {
-        var accessCode = await _accessCodeRepository.GetAccessCodeByUserIdAsync(accountId);
+        var accessCode = await _accessCodeRepository.GetAccessCodeByUserIdAsync(accountId, code);
 
-        return await VerifyAccessCode(accessCode, code);
+        return await VerifyAccessCode(accessCode);
     }
 
     public async Task<(bool, Guid)> VerifyAccessCode(int hash, int code)
     {
-        var accessCode = await _accessCodeRepository.GetAccessCodeByHashAsync(hash);
+        var accessCode = await _accessCodeRepository.GetAccessCodeByHashAsync(hash, code);
 
-        var isVerified = await VerifyAccessCode(accessCode, code);
+        var isVerified = await VerifyAccessCode(accessCode);
 
         return (isVerified, accessCode.UserId);
     }
 
-    private async Task<bool> VerifyAccessCode(AccessCode accessCode, int code)
+    private async Task<bool> VerifyAccessCode(AccessCode accessCode)
     {
         if (accessCode == null)
-            throw new NotFoundException(ErrorCode.BR_ACC_AccessCodeWasExpired);
+            throw new NotFoundException(ErrorCode.BR_ACC_InvalidAccessCode);
 
-        if (!await VerifyCode(accessCode, code))
+        if (!await VerifyCode(accessCode))
         {
             ThrowException(accessCode.Status);
             return false;
@@ -55,7 +55,7 @@ public class AccessCodeService : IAccessCodeService
         return true;
     }
 
-    private async Task<bool> VerifyCode(AccessCode accessCode, int code)
+    private async Task<bool> VerifyCode(AccessCode accessCode)
     {
         bool isVerified = false;
 
@@ -66,14 +66,6 @@ public class AccessCodeService : IAccessCodeService
             if (accessCode.IsExpired)
             {
                 updateRequest.UpdateField(a => a.Status, AccessCodeStatus.Expired);
-            }
-            else if (accessCode.AttemptsLeft < 1)
-            {
-                updateRequest.UpdateField(a => a.Status, AccessCodeStatus.AttemtsAreOver);
-            }
-            else if (accessCode.Code != code)
-            {
-                updateRequest.UpdateField(a => a.AttemptsLeft, accessCode.AttemptsLeft--);
             }
             else
             {
@@ -93,8 +85,6 @@ public class AccessCodeService : IAccessCodeService
         {
             case AccessCodeStatus.Used:
                 throw new ServiceException(ErrorCode.BR_ACC_AccessCodeWasAlreadyUsed);
-            case AccessCodeStatus.AttemtsAreOver:
-                throw new ServiceException(ErrorCode.BR_ACC_AttemtsAreOver);
             case AccessCodeStatus.Expired:
                 throw new ServiceException(ErrorCode.BR_ACC_AccessCodeWasExpired);
         }

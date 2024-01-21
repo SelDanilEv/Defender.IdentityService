@@ -18,16 +18,29 @@ public class AccessCodeRepository : BaseMongoRepository<AccessCode>, IAccessCode
         return await AddItemAsync(code);
     }
 
-    public async Task<AccessCode> GetAccessCodeByHashAsync(int hash)
+    public async Task<AccessCode> GetAccessCodeByHashAsync(int hash, int? code)
     {
-        var findRequest = FindModelRequest<AccessCode>.Init(a => a.Hash, hash);
+        var findRequest = FindModelRequest<AccessCode>
+            .Init(a => a.Hash, hash)
+            .Sort(x => x.CreatedDate, SortType.Desc);
+
+        if (code.HasValue)
+        {
+            findRequest.And(x => x.Code, code.Value);
+        }
 
         return await GetItemAsync(findRequest);
     }
 
-    public async Task<AccessCode> GetAccessCodeByUserIdAsync(Guid userId)
+    public async Task<AccessCode> GetAccessCodeByUserIdAsync(Guid userId, int? code)
     {
-        var findRequest = FindModelRequest<AccessCode>.Init(a => a.UserId, userId);
+        var findRequest = FindModelRequest<AccessCode>
+            .Init(a => a.UserId, userId)
+            .Sort(x => x.CreatedDate, SortType.Desc);
+
+        if(code.HasValue) {
+            findRequest.And(x => x.Code, code.Value);
+        }
 
         return await GetItemAsync(findRequest);
     }

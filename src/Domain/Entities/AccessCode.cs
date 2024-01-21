@@ -20,7 +20,6 @@ public class AccessCode : IBaseModel
     public AccessCodeType Type { get; set; } = AccessCodeType.Universal;
     [BsonRepresentation(BsonType.String)]
     public AccessCodeStatus Status { get; set; } = AccessCodeStatus.Active;
-    public int AttemptsLeft { get; set; } = Constants.AccessCodeDefaultAttemts;
     public DateTime ExpirationDate => CreatedDate.Add(ValidTime);
     public bool IsExpired => ExpirationDate < DateTime.UtcNow;
 

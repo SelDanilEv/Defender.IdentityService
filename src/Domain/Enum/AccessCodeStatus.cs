@@ -4,6 +4,5 @@ public enum AccessCodeStatus
 {
     Active,
     Used,
-    AttemtsAreOver,
     Expired,
 }

@@ -5,5 +5,4 @@ internal class Constants
     public const int AccessCodeMaxValue = 999999;
 
     public const int AccessCodeDefaultValidTimeMinutes = 10;
-    public const int AccessCodeDefaultAttemts = 3;
 }
