@@ -13,21 +13,21 @@ public record GetCurrentAccountDetailsQuery : IRequest<AccountInfo>
 
 public class GetCurrentAccountDetailsQueryHandler : IRequestHandler<GetCurrentAccountDetailsQuery, AccountInfo>
 {
-    private readonly IAccountAccessor _accountAccessor;
+    private readonly ICurrentAccountAccessor _currentAccountAccessor;
     private readonly IAccountManagementService _accountManagementService;
 
     public GetCurrentAccountDetailsQueryHandler(
-        IAccountAccessor accountAccessor,
+        ICurrentAccountAccessor currentAccountAccessor,
         IAccountManagementService accountManagementService
         )
     {
-        _accountAccessor = accountAccessor;
+        _currentAccountAccessor = currentAccountAccessor;
         _accountManagementService = accountManagementService;
     }
 
     public async Task<AccountInfo> Handle(GetCurrentAccountDetailsQuery request, CancellationToken cancellationToken)
     {
-        var currentAccountId = _accountAccessor.AccountInfo.Id;
+        var currentAccountId = _currentAccountAccessor.GetAccountId();
 
         var currentAccountInfo = await _accountManagementService.GetAccountByIdAsync(currentAccountId);
 

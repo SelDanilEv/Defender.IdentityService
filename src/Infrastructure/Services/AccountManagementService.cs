@@ -16,15 +16,18 @@ public class AccountManagementService : IAccountManagementService
 {
     private readonly IAccountInfoRepository _accountInfoRepository;
     private readonly IAccountAccessor _accountAccessor;
+    private readonly IAuthorizationCheckingService _authorizationCheckingService;
     private readonly IAccessCodeService _accessCodeService;
 
     public AccountManagementService(
         IAccessCodeService accessCodeService,
         IAccountInfoRepository accountInfoRepository,
+        IAuthorizationCheckingService authorizationCheckingService,
         IAccountAccessor accountAccessor)
     {
         _accessCodeService = accessCodeService;
         _accountInfoRepository = accountInfoRepository;
+        _authorizationCheckingService = authorizationCheckingService;
         _accountAccessor = accountAccessor;
     }
 
@@ -63,32 +66,10 @@ public class AccountManagementService : IAccountManagementService
 
     public async Task<AccountInfo> ChangePasswordAsync(Guid accountId, string newPassword)
     {
-        var userAccount = await GetOrCreateAccountAsync(accountId);
-
-        var currentUser = _accountAccessor.AccountInfo;
-
-        if (currentUser.IsSuperAdmin)
-        {
-            return await ChangePasswordAsync(accountId, newPassword);
-        }
-        else if (currentUser.IsAdmin)
-        {
-            if (userAccount.Id != currentUser.Id && userAccount.IsAdmin)
-            {
-                throw new ForbiddenAccessException(ErrorCode.BR_ACC_AdminCannotChangeAdminPassword);
-            }
-
-            return await PrivateChangePasswordAsync(accountId, newPassword);
-        }
-        else
-        {
-            if (userAccount.Id != currentUser.Id)
-            {
-                throw new ForbiddenAccessException(ErrorCode.BR_ACC_UserCanUpdateOnlyOwnAccount);
-            }
-
-            return await PrivateChangePasswordAsync(accountId, newPassword);
-        }
+        return await _authorizationCheckingService.RunWithAuthAsync(
+            accountId,
+            async () => await PrivateChangePasswordAsync(accountId, newPassword)
+        );
     }
 
     public async Task VerifyEmailAsync(int hash, int code)

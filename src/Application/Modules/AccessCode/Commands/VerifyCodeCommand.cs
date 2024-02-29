@@ -22,20 +22,21 @@ public sealed class VerifyCodeCommandValidator : AbstractValidator<VerifyCodeCom
 
 public sealed class VerifyCodeCommandHandler : IRequestHandler<VerifyCodeCommand, bool>
 {
-    private readonly IAccountAccessor _accountAccessor;
+    private readonly ICurrentAccountAccessor _currentAccountAccessor;
     private readonly IAccessCodeService _accessCodeService;
 
     public VerifyCodeCommandHandler(
-        IAccountAccessor accountAccessor,
-        IAccessCodeService accessCodeService
-        )
+        ICurrentAccountAccessor currentAccountAccessor,
+        IAccessCodeService accessCodeService)
     {
-        _accountAccessor = accountAccessor;
+        _currentAccountAccessor = currentAccountAccessor;
         _accessCodeService = accessCodeService;
     }
 
     public async Task<bool> Handle(VerifyCodeCommand request, CancellationToken cancellationToken)
     {
-        return await _accessCodeService.VerifyAccessCode(_accountAccessor.AccountInfo.Id, request.Code);
+        var currentUserAccountId = _currentAccountAccessor.GetAccountId();
+
+        return await _accessCodeService.VerifyAccessCode(currentUserAccountId, request.Code);
     }
 }

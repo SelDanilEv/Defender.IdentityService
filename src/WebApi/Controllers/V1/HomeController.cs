@@ -9,15 +9,17 @@ using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Defender.Common.Interfaces;
+using Defender.Common.Helpers;
+using System.Data;
 
 namespace Defender.IdentityService.WebApi.Controllers.V1;
 
 public class HomeController : BaseApiController
 {
-    private readonly IAccountAccessor _accountAccessor;
+    private readonly ICurrentAccountAccessor _accountAccessor;
 
     public HomeController(
-        IAccountAccessor accountAccessor,
+        ICurrentAccountAccessor accountAccessor,
         IMediator mediator,
         IMapper mapper)
         : base(mediator, mapper)
@@ -36,12 +38,14 @@ public class HomeController : BaseApiController
 
     [HttpGet("authorization/check")]
     [Auth(Roles.User)]
-    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-    public async Task<object> AuthorizationCheckAsync()
+    public async Task<string> AuthorizationCheckAsync()
     {
-        return new { IsAuthorized = true, Role = _accountAccessor.AccountInfo.GetHighestRole() };
+        var userRoles = _accountAccessor.GetRoles();
+
+        return RolesHelper.GetHighestRole(userRoles);
     }
 
     [Auth(Roles.SuperAdmin)]
