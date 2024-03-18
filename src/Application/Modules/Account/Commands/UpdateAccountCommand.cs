@@ -19,9 +19,9 @@ public class UpdateAccountCommand : IRequest<AccountInfo>
     {
         var updateRequest = UpdateModelRequest<AccountInfo>
             .Init(Id)
-            .UpdateFieldIfNotNull(x => x.IsPhoneVerified, IsPhoneVerified)
-            .UpdateFieldIfNotNull(x => x.IsEmailVerified, IsEmailVerified)
-            .UpdateFieldIfNotNull(x => x.IsBlocked, IsBlocked);
+            .SetIfNotNull(x => x.IsPhoneVerified, IsPhoneVerified)
+            .SetIfNotNull(x => x.IsEmailVerified, IsEmailVerified)
+            .SetIfNotNull(x => x.IsBlocked, IsBlocked);
 
         return updateRequest;
     }

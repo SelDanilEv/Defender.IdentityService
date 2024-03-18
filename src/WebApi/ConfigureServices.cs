@@ -57,7 +57,7 @@ public static class ConfigureServices
         {
             auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(async options =>
+        }).AddJwtBearer(options =>
         {
             options.RequireHttpsMetadata = false;
             options.SaveToken = true;
@@ -68,7 +68,7 @@ public static class ConfigureServices
                 ValidIssuer = configuration["JwtTokenIssuer"],
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(await SecretsHelper.GetSecretAsync(Common.Enums.Secret.JwtSecret)))
+                    Encoding.UTF8.GetBytes(SecretsHelper.GetSecretAsync(Common.Enums.Secret.JwtSecret).Result))
             };
         });
 
@@ -82,7 +82,7 @@ public static class ConfigureServices
             options.SwaggerDoc("v1", new OpenApiInfo
             {
                 Version = "v1",
-                Title = "Identity service",
+                Title = "Identity Service",
                 Description = "Service to manage generate jwt token and manage accounts authorization info",
             });
 

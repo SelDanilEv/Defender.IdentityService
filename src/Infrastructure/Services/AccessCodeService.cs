@@ -65,11 +65,11 @@ public class AccessCodeService : IAccessCodeService
 
             if (accessCode.IsExpired)
             {
-                updateRequest.UpdateField(a => a.Status, AccessCodeStatus.Expired);
+                updateRequest.Set(a => a.Status, AccessCodeStatus.Expired);
             }
             else
             {
-                updateRequest.UpdateField(a => a.Status, AccessCodeStatus.Used);
+                updateRequest.Set(a => a.Status, AccessCodeStatus.Used);
                 isVerified = true;
             }
 

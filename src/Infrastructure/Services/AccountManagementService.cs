@@ -97,7 +97,7 @@ public class AccountManagementService : IAccountManagementService
         var updateRequest = UpdateModelRequest<AccountInfo>
             .Init(accountId);
 
-        updateRequest.UpdateField(x => x.IsEmailVerified, isEmailVerified);
+        updateRequest.Set(x => x.IsEmailVerified, isEmailVerified);
 
         return await _accountInfoRepository.UpdateAccountInfoAsync(updateRequest);
     }
@@ -108,7 +108,7 @@ public class AccountManagementService : IAccountManagementService
             .Init(accountId);
 
         updateRequest
-            .UpdateField(x => x.IsBlocked, doBlockUser);
+            .Set(x => x.IsBlocked, doBlockUser);
 
         return await _accountInfoRepository.UpdateAccountInfoAsync(updateRequest);
     }
@@ -119,7 +119,7 @@ public class AccountManagementService : IAccountManagementService
             .Init(accountId);
 
         updateRequest
-            .UpdateField(x => x.PasswordHash, await PasswordHelper.HashPassword(newPassword));
+            .Set(x => x.PasswordHash, await PasswordHelper.HashPassword(newPassword));
 
         return await _accountInfoRepository.UpdateAccountInfoAsync(updateRequest);
     }
