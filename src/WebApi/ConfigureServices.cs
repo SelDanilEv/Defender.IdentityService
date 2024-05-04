@@ -79,6 +79,8 @@ public static class ConfigureServices
     {
         services.AddSwaggerGen(options =>
         {
+            options.UseInlineDefinitionsForEnums();
+
             options.SwaggerDoc("v1", new OpenApiInfo
             {
                 Version = "v1",

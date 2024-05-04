@@ -29,42 +29,35 @@ public sealed class LoginWithPasswordCommandValidator : AbstractValidator<LoginW
     }
 }
 
-public sealed class LoginWithPasswordCommandHandler : IRequestHandler<LoginWithPasswordCommand, LoginResponse>
-{
-    private readonly IUserManagementService _userManagementService;
-    private readonly IAccountManagementService _accountManagementService;
-    private readonly ITokenManagementService _tokenManagementService;
-    private readonly IMapper _mapper;
-
-    public LoginWithPasswordCommandHandler(
+public sealed class LoginWithPasswordCommandHandler(
         IUserManagementService userManagementService,
         IAccountManagementService accountManagementService,
         ITokenManagementService tokenManagementService,
         IMapper mapper
-        )
-    {
-        _userManagementService = userManagementService;
-        _accountManagementService = accountManagementService;
-        _tokenManagementService = tokenManagementService;
-        _mapper = mapper;
-    }
+        ) : IRequestHandler<LoginWithPasswordCommand, LoginResponse>
+{
 
     public async Task<LoginResponse> Handle(LoginWithPasswordCommand request, CancellationToken cancellationToken)
     {
         var response = new LoginResponse();
 
-        response.UserInfo = await _userManagementService.GetUserByLoginAsync(request.Login);
+        response.UserInfo = await userManagementService.GetUserByLoginAsync(request.Login);
 
-        var accountInfo = await _accountManagementService.GetAccountWithPasswordAsync(response.UserInfo.Id, request.Password);
+        var accountInfo = await accountManagementService.GetAccountWithPasswordAsync(response.UserInfo.Id, request.Password);
 
         if (accountInfo?.IsBlocked ?? false)
         {
             throw new ServiceException(ErrorCode.BR_ACC_UserIsBlocked);
         }
 
-        response.AccountInfo = _mapper.Map<AccountDto>(accountInfo);
+        if (accountInfo == null)
+        {
+            throw new ServiceException(ErrorCode.BR_ACC_InvalidPassword);
+        }
 
-        response.Token = await _tokenManagementService.GenerateNewJWTAsync(accountInfo);
+        response.AccountInfo = mapper.Map<AccountDto>(accountInfo);
+
+        response.Token = await tokenManagementService.GenerateNewJWTAsync(accountInfo);
 
         return response;
     }

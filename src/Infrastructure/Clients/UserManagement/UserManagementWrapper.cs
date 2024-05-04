@@ -50,6 +50,16 @@ public class UserManagementWrapper : BaseInternalSwaggerWrapper, IUserManagement
         }, AuthorizationType.Service);
     }
 
+    public async Task<Guid> GetUserIdByEmailAsync(string email)
+    {
+        return await ExecuteSafelyAsync(async () =>
+        {
+            var response = await _client.GetIdByEmailAsync(email);
+
+            return response;
+        }, AuthorizationType.Service);
+    }
+
     public async Task<Common.DTOs.UserDto> GetUserByLoginAsync(string login)
     {
         return await ExecuteSafelyAsync(async () =>

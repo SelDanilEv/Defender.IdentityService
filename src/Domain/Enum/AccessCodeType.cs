@@ -2,7 +2,8 @@
 
 public enum AccessCodeType
 {
-    Universal,
+    Default,
     UpdateAccount,
     EmailVerification,
+    ResetPassword,
 }

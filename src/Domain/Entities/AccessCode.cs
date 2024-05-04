@@ -17,7 +17,7 @@ public class AccessCode : IBaseModel
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
     public TimeSpan ValidTime { get; set; } = TimeSpan.FromMinutes(Constants.AccessCodeDefaultValidTimeMinutes);
     [BsonRepresentation(BsonType.String)]
-    public AccessCodeType Type { get; set; } = AccessCodeType.Universal;
+    public AccessCodeType Type { get; set; } = AccessCodeType.Default;
     [BsonRepresentation(BsonType.String)]
     public AccessCodeStatus Status { get; set; } = AccessCodeStatus.Active;
     public DateTime ExpirationDate => CreatedDate.Add(ValidTime);
@@ -37,7 +37,7 @@ public class AccessCode : IBaseModel
 
     public static AccessCode CreateAccessCode(
         Guid userId,
-        AccessCodeType accessCodeType = AccessCodeType.Universal,
+        AccessCodeType accessCodeType = AccessCodeType.Default,
         int validTimeMinutes = Constants.AccessCodeDefaultValidTimeMinutes)
             => new AccessCode(userId)
         {

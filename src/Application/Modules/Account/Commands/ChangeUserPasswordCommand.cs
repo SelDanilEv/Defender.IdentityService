@@ -1,5 +1,9 @@
-﻿using Defender.Common.Errors;
+﻿using Defender.Common.Enums;
+using Defender.Common.Errors;
+using Defender.Common.Exceptions;
+using Defender.Common.Interfaces;
 using Defender.IdentityService.Application.Common.Interfaces;
+using Defender.IdentityService.Domain.Enum;
 using FluentValidation;
 using MediatR;
 
@@ -7,38 +11,64 @@ namespace Defender.IdentityService.Application.Modules.Account.Commands;
 
 public record ChangeUserPasswordCommand : IRequest<Unit>
 {
-    public Guid AccountId { get; set; }
+    public Guid? AccountId { get; set; }
     public string? NewPassword { get; set; }
+    public int? Code { get; set; }
 };
 
-public sealed class ChangeUserPasswordCommandValidator : AbstractValidator<ChangeUserPasswordCommand>
+public sealed class ChangeUserPasswordCommandValidator 
+    : AbstractValidator<ChangeUserPasswordCommand>
 {
     public ChangeUserPasswordCommandValidator()
     {
-        RuleFor(s => s.AccountId)
-                  .NotEmpty().WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_InvalidRequest));
-
         RuleFor(p => p.NewPassword)
-          .NotEmpty().WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_EmptyPassword))
-          .MinimumLength(ValidationConstants.MinPasswordLength).WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_MinPasswordLength))
-          .MaximumLength(ValidationConstants.MaxPasswordLength).WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_MaxPasswordLength));
+          .NotEmpty()
+          .WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_EmptyPassword))
+          .MinimumLength(ValidationConstants.MinPasswordLength)
+          .WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_MinPasswordLength))
+          .MaximumLength(ValidationConstants.MaxPasswordLength)
+          .WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_MaxPasswordLength));
     }
 }
 
-public sealed class ChangeUserPasswordCommandHandler : IRequestHandler<ChangeUserPasswordCommand, Unit>
+public sealed class ChangeUserPasswordCommandHandler(
+        ICurrentAccountAccessor currentAccountAccessor,
+        IAccessCodeService accessCodeService,
+        IAccountManagementService accountManagementService,
+        IAuthorizationCheckingService authorizationCheckingService
+        ) : IRequestHandler<ChangeUserPasswordCommand, Unit>
 {
-    private readonly IAccountManagementService _accountManagementService;
-
-    public ChangeUserPasswordCommandHandler(
-        IAccountManagementService accountManagementService
-        )
+    public async Task<Unit> Handle(
+        ChangeUserPasswordCommand request, 
+        CancellationToken cancellationToken)
     {
-        _accountManagementService = accountManagementService;
-    }
+        var accountId = request.AccountId ?? currentAccountAccessor.GetAccountId();
 
-    public async Task<Unit> Handle(ChangeUserPasswordCommand request, CancellationToken cancellationToken)
-    {
-        await _accountManagementService.ChangePasswordAsync(request.AccountId, request.NewPassword);
+        if(currentAccountAccessor.HasRole(Role.Admin))
+        {
+            await authorizationCheckingService.ExecuteWithAuthCheckAsync(accountId,
+                async () =>
+                    await accountManagementService.ChangePasswordAsync(
+                        accountId,
+                        request.NewPassword));
+
+            return Unit.Value;
+        }
+
+        if (!request.Code.HasValue)
+            throw new ServiceException(ErrorCode.VL_ACC_EmptyAccessCode);
+
+        var isCodeValid = await accessCodeService.VerifyAccessCode(
+            accountId,
+            request.Code.Value,
+            AccessCodeType.ResetPassword);
+
+        if (!isCodeValid)
+            throw new ServiceException(ErrorCode.BR_ACC_InvalidAccessCode);
+
+        await accountManagementService.ChangePasswordAsync(
+            accountId,
+            request.NewPassword);
 
         return Unit.Value;
     }

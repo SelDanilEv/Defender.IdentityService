@@ -9,7 +9,7 @@ namespace Defender.IdentityService.Application.Modules.Verification.Commands;
 public record SendVerificationCodeCommand : IRequest<Unit>
 {
     public Guid UserId { get; set; }
-    public AccessCodeType Type { get; set; } = AccessCodeType.Universal;
+    public AccessCodeType Type { get; set; } = AccessCodeType.Default;
 };
 
 public sealed class SendVerificationCodeCommandValidator : AbstractValidator<SendVerificationCodeCommand>

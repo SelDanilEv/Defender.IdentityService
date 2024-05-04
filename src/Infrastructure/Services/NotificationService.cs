@@ -18,22 +18,23 @@ public class NotificationService : INotificationService
         _notificationWrapper = notificationWrapper;
     }
 
-    public async Task<string> SendVerificationCodeAsync(AccessCode accessCode)
+    public async Task<string> SendVerificationCodeAsync(AccessCode accessCode, string? email = null)
     {
-        var userInfo = await _userManagementService.GetUserByIdAsync(accessCode.UserId);
+        var userEmail = email ?? 
+            (await _userManagementService.GetUserByIdAsync(accessCode.UserId)).Email;
 
         switch (accessCode.Type)
         {
             case AccessCodeType.EmailVerification:
                 return await _notificationWrapper
-                    .SendEmailVerificationAsync(userInfo.Email, accessCode.Hash, accessCode.Code);
-            case AccessCodeType.Universal:
+                    .SendEmailVerificationAsync(userEmail, accessCode.Hash, accessCode.Code);
+            case AccessCodeType.Default:
+            case AccessCodeType.ResetPassword:
             case AccessCodeType.UpdateAccount:
             default:
                 return await _notificationWrapper
-                    .SendVerificationCodeAsync(userInfo.Email, accessCode.Code);
+                    .SendVerificationCodeAsync(userEmail, accessCode.Code);
         };
     }
-
 
 }

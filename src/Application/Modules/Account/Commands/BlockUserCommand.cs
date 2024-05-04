@@ -21,26 +21,18 @@ public sealed class BlockUserCommandValidator : AbstractValidator<BlockUserComma
     }
 }
 
-public sealed class BlockUserCommandHandler : IRequestHandler<BlockUserCommand, Unit>
-{
-    private readonly IAuthorizationCheckingService _authorizationCheckingService;
-    private readonly IAccountManagementService _accountManagementService;
-
-    public BlockUserCommandHandler(
+public sealed class BlockUserCommandHandler(
         IAuthorizationCheckingService authorizationCheckingService,
         IAccountManagementService accountManagementService
-        )
-    {
-        _authorizationCheckingService = authorizationCheckingService;
-        _accountManagementService = accountManagementService;
-    }
+        ) : IRequestHandler<BlockUserCommand, Unit>
+{
 
     public async Task<Unit> Handle(BlockUserCommand request, CancellationToken cancellationToken)
     {
-        await _authorizationCheckingService.RunWithAuthAsync(
+        await authorizationCheckingService.ExecuteWithAuthCheckAsync(
             request.AccountId,
-            async ()=> await _accountManagementService.BlockAsync(request.AccountId, request.DoBlockUser),
-            ErrorCode.BR_ACC_SuperAdminCannotBeBlocked,
+            async () => await accountManagementService.BlockAsync(request.AccountId, request.DoBlockUser),
+            false,
             ErrorCode.BR_ACC_AdminCannotBlockAdmins
             );
 

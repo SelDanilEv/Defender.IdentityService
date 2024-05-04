@@ -33,6 +33,11 @@ public class UserManagementService : IUserManagementService
         return await _userManagementWrapper.GetUserByLoginAsync(login);
     }
 
+    public async Task<Guid> GetUserIdByEmailAsync(string email)
+    {
+        return await _userManagementWrapper.GetUserIdByEmailAsync(email);
+    }
+
     public async Task<UserDto> CreateOrGetUserByGoogleTokenAsync(string token)
     {
         var googleUser = await _googleTokenParsingService.GetGoogleUserAsync(token);

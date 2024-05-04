@@ -9,42 +9,37 @@ using MediatR;
 
 namespace Defender.IdentityService.Application.Modules.Account.Commands;
 
-public record LoginGoogleCommand : IRequest<LoginResponse>
+public record LoginAsAdminCommand : IRequest<LoginResponse>
 {
-    public string? Token { get; set; }
+    public Guid? UserId { get; set; }
 };
 
-public sealed class LoginGoogleCommandValidator : AbstractValidator<LoginGoogleCommand>
+public sealed class LoginAsAdminCommandValidator : AbstractValidator<LoginAsAdminCommand>
 {
-    public LoginGoogleCommandValidator()
+    public LoginAsAdminCommandValidator()
     {
-        RuleFor(x => x.Token)
-            .NotEmpty().WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.ES_GoogleAPIIssue));
+        RuleFor(s => s.UserId)
+                  .NotEmpty()
+                  .WithMessage(
+                    ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_EmptyUserId));
     }
 }
 
-public sealed class LoginGoogleCommandHandler(
+public sealed class LoginAsAdminCommandHandler(
         IUserManagementService userManagementService,
         IAccountManagementService accountManagementService,
         ITokenManagementService tokenManagementService,
         IMapper mapper
-        ) : IRequestHandler<LoginGoogleCommand, LoginResponse>
+        ) : IRequestHandler<LoginAsAdminCommand, LoginResponse>
 {
 
-    public async Task<LoginResponse> Handle(
-        LoginGoogleCommand request,
-        CancellationToken cancellationToken)
+    public async Task<LoginResponse> Handle(LoginAsAdminCommand request, CancellationToken cancellationToken)
     {
         var response = new LoginResponse();
 
-        response.UserInfo = await userManagementService
-            .CreateOrGetUserByGoogleTokenAsync(request.Token);
+        response.UserInfo = await userManagementService.GetUserByIdAsync(request.UserId.Value);
 
-        var accountInfo = await accountManagementService
-            .GetOrCreateAccountAsync(response.UserInfo.Id);
-
-        accountInfo = await accountManagementService
-            .UpdateEmailVerificationAsync(accountInfo.Id, true);
+        var accountInfo = await accountManagementService.GetAccountByIdAsync(request.UserId.Value);
 
         if (accountInfo?.IsBlocked ?? false)
         {

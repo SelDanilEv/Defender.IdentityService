@@ -1,5 +1,4 @@
 ﻿using Defender.Common.Errors;
-using Defender.Common.Interfaces;
 using Defender.IdentityService.Application.Common.Interfaces;
 using FluentValidation;
 using MediatR;
@@ -23,23 +22,14 @@ public sealed class VerifyEmailCommandValidator : AbstractValidator<VerifyEmailC
     }
 }
 
-public sealed class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCommand, bool>
-{
-    private readonly IAccountAccessor _accountAccessor;
-    private readonly IAccountManagementService _accountManagementService;
-
-    public VerifyEmailCommandHandler(
-        IAccountAccessor accountAccessor,
+public sealed class VerifyEmailCommandHandler(
         IAccountManagementService accountManagementService
-        )
-    {
-        _accountAccessor = accountAccessor;
-        _accountManagementService = accountManagementService;
-    }
+        ) : IRequestHandler<VerifyEmailCommand, bool>
+{
 
     public async Task<bool> Handle(VerifyEmailCommand request, CancellationToken cancellationToken)
     {
-        await _accountManagementService.VerifyEmailAsync(request.Hash, request.Code);
+        await accountManagementService.VerifyEmailAsync(request.Hash, request.Code);
 
         return true;
     }

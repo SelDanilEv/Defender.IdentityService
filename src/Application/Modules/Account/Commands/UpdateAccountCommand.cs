@@ -1,30 +1,28 @@
-﻿using AutoMapper;
-using Defender.Common.DB.Model;
+﻿using Defender.Common.Enums;
 using Defender.Common.Errors;
+using Defender.Common.Interfaces;
 using Defender.IdentityService.Application.Common.Interfaces;
+using Defender.IdentityService.Application.Models.ApiRequests;
 using Defender.IdentityService.Domain.Entities;
 using FluentValidation;
 using MediatR;
 
 namespace Defender.IdentityService.Application.Modules.Account.Commands;
 
-public class UpdateAccountCommand : IRequest<AccountInfo>
+public record UpdateAccountCommand(
+        Guid Id,
+        Role? Role,
+        bool? IsPhoneVerified,
+        bool? IsEmailVerified,
+        bool? IsBlocked)
+    : UpdateAccountInfoRequest(
+        Id,
+        Role,
+        IsPhoneVerified,
+        IsEmailVerified,
+        IsBlocked),
+    IRequest<AccountInfo>
 {
-    public Guid Id { get; set; }
-    public bool? IsPhoneVerified { get; set; }
-    public bool? IsEmailVerified { get; set; }
-    public bool? IsBlocked { get; set; }
-
-    public UpdateModelRequest<AccountInfo> CreateUpdateRequest()
-    {
-        var updateRequest = UpdateModelRequest<AccountInfo>
-            .Init(Id)
-            .SetIfNotNull(x => x.IsPhoneVerified, IsPhoneVerified)
-            .SetIfNotNull(x => x.IsEmailVerified, IsEmailVerified)
-            .SetIfNotNull(x => x.IsBlocked, IsBlocked);
-
-        return updateRequest;
-    }
 };
 
 public sealed class UpdateAccountCommandValidator : AbstractValidator<UpdateAccountCommand>
@@ -34,28 +32,28 @@ public sealed class UpdateAccountCommandValidator : AbstractValidator<UpdateAcco
         RuleFor(s => s.Id)
                   .NotEmpty()
                     .WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_EmptyUserId));
+
+        RuleFor(p => p)
+            .Must(p => p.IsPhoneVerified.HasValue
+                || p.IsEmailVerified.HasValue
+                || p.Role.HasValue
+                || p.IsBlocked.HasValue)
+            .WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_InvalidRequest));
     }
 }
 
-public sealed class UpdateAccountCommandHandler : IRequestHandler<UpdateAccountCommand, AccountInfo>
+public sealed class UpdateAccountCommandHandler(
+        IAuthorizationCheckingService authorizationCheckingService,
+        IAccountManagementService accountManagementService)
+    : IRequestHandler<UpdateAccountCommand, AccountInfo>
 {
-    private readonly IAccountManagementService _accountManagementService;
-    private readonly IMapper _mapper;
-
-    public UpdateAccountCommandHandler(
-        IAccountManagementService accountManagementService,
-        IMapper mapper
-        )
-    {
-        _accountManagementService = accountManagementService;
-        _mapper = mapper;
-    }
-
     public async Task<AccountInfo> Handle(
-        UpdateAccountCommand request, 
+        UpdateAccountCommand request,
         CancellationToken cancellationToken)
     {
-        var account = await _accountManagementService.UpdateAccountInfoAsync(request);
+        var account = await authorizationCheckingService.ExecuteWithAuthCheckAsync(
+            request.Id,
+            async () => await accountManagementService.UpdateAccountInfoAsync(request));
 
         return account;
     }

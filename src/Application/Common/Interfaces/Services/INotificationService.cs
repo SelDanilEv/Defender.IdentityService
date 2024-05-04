@@ -4,5 +4,5 @@ namespace Defender.IdentityService.Application.Common.Interfaces;
 
 public interface INotificationService
 {
-    public Task<string> SendVerificationCodeAsync(AccessCode accessCode);
+    public Task<string> SendVerificationCodeAsync(AccessCode accessCode, string? email = null);
 }

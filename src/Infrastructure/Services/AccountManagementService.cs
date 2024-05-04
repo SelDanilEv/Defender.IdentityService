@@ -1,39 +1,29 @@
-﻿using Defender.Common.DB.Model;
+﻿using Defender.Common.Consts;
+using Defender.Common.DB.Model;
+using Defender.Common.Enums;
 using Defender.Common.Errors;
 using Defender.Common.Exceptions;
+using Defender.Common.Helpers;
 using Defender.Common.Interfaces;
-using Defender.Common.Models;
 using Defender.IdentityService.Application.Common.Interfaces;
 using Defender.IdentityService.Application.Common.Interfaces.Repositories;
-using Defender.IdentityService.Application.Modules.Account.Commands;
+using Defender.IdentityService.Application.Models.ApiRequests;
 using Defender.IdentityService.Domain.Entities;
+using Defender.IdentityService.Domain.Enum;
 using Defender.IdentityService.Infrastructure.Helpers;
-using MongoDB.Driver.Core.Operations;
 
 namespace Defender.IdentityService.Infrastructure.Services;
 
-public class AccountManagementService : IAccountManagementService
-{
-    private readonly IAccountInfoRepository _accountInfoRepository;
-    private readonly IAccountAccessor _accountAccessor;
-    private readonly IAuthorizationCheckingService _authorizationCheckingService;
-    private readonly IAccessCodeService _accessCodeService;
-
-    public AccountManagementService(
+public class AccountManagementService(
         IAccessCodeService accessCodeService,
         IAccountInfoRepository accountInfoRepository,
         IAuthorizationCheckingService authorizationCheckingService,
-        IAccountAccessor accountAccessor)
-    {
-        _accessCodeService = accessCodeService;
-        _accountInfoRepository = accountInfoRepository;
-        _authorizationCheckingService = authorizationCheckingService;
-        _accountAccessor = accountAccessor;
-    }
-
+        ICurrentAccountAccessor currentAccountAccessor)
+    : IAccountManagementService
+{
     public async Task<AccountInfo> GetAccountByIdAsync(Guid accountId)
     {
-        return await _accountInfoRepository.GetAccountInfoByIdAsync(accountId);
+        return await accountInfoRepository.GetAccountInfoByIdAsync(accountId);
     }
 
     public async Task<AccountInfo> GetOrCreateAccountAsync(Guid accountId, string password = "")
@@ -44,7 +34,7 @@ public class AccountManagementService : IAccountManagementService
         {
             accountInfo = await CreateDefaultUserAccount(accountId, password);
 
-            accountInfo = await _accountInfoRepository.CreateAccountInfoAsync(accountInfo);
+            accountInfo = await accountInfoRepository.CreateAccountInfoAsync(accountInfo);
         }
 
         return accountInfo;
@@ -53,6 +43,12 @@ public class AccountManagementService : IAccountManagementService
     public async Task<AccountInfo> GetAccountWithPasswordAsync(Guid accountId, string password)
     {
         var accountInfo = await this.GetAccountByIdAsync(accountId);
+
+        if (accountInfo == null)
+        {
+            throw new ServiceException(
+                ErrorCodeHelper.GetErrorCode(ErrorCode.BR_ACC));
+        }
 
         if (!await PasswordHelper.CheckPassword(password, accountInfo.PasswordHash))
         {
@@ -66,15 +62,12 @@ public class AccountManagementService : IAccountManagementService
 
     public async Task<AccountInfo> ChangePasswordAsync(Guid accountId, string newPassword)
     {
-        return await _authorizationCheckingService.RunWithAuthAsync(
-            accountId,
-            async () => await PrivateChangePasswordAsync(accountId, newPassword)
-        );
+        return await PrivateChangePasswordAsync(accountId, newPassword);
     }
 
     public async Task VerifyEmailAsync(int hash, int code)
     {
-        var (isVerified, userId) = await _accessCodeService.VerifyAccessCode(hash, code);
+        var (isVerified, userId) = await accessCodeService.VerifyAccessCode(hash, code, AccessCodeType.EmailVerification);
 
         if (!isVerified)
         {
@@ -84,11 +77,11 @@ public class AccountManagementService : IAccountManagementService
         await UpdateEmailVerificationAsync(userId, true);
     }
 
-    public async Task<AccountInfo> UpdateAccountInfoAsync(UpdateAccountCommand updateAccountCommand)
+    public async Task<AccountInfo> UpdateAccountInfoAsync(UpdateAccountInfoRequest updateRequest)
     {
-        var updateRequest = updateAccountCommand.CreateUpdateRequest();
+        var updateModelRequest = CreateUpdateModelRequest(updateRequest);
 
-        return await _accountInfoRepository.UpdateAccountInfoAsync(updateRequest);
+        return await accountInfoRepository.UpdateAccountInfoAsync(updateModelRequest);
     }
 
     public async Task<AccountInfo> UpdateEmailVerificationAsync(
@@ -99,7 +92,7 @@ public class AccountManagementService : IAccountManagementService
 
         updateRequest.Set(x => x.IsEmailVerified, isEmailVerified);
 
-        return await _accountInfoRepository.UpdateAccountInfoAsync(updateRequest);
+        return await accountInfoRepository.UpdateAccountInfoAsync(updateRequest);
     }
 
     public async Task<AccountInfo> BlockAsync(Guid accountId, bool doBlockUser)
@@ -110,7 +103,7 @@ public class AccountManagementService : IAccountManagementService
         updateRequest
             .Set(x => x.IsBlocked, doBlockUser);
 
-        return await _accountInfoRepository.UpdateAccountInfoAsync(updateRequest);
+        return await accountInfoRepository.UpdateAccountInfoAsync(updateRequest);
     }
 
     private async Task<AccountInfo> PrivateChangePasswordAsync(Guid accountId, string newPassword)
@@ -121,7 +114,7 @@ public class AccountManagementService : IAccountManagementService
         updateRequest
             .Set(x => x.PasswordHash, await PasswordHelper.HashPassword(newPassword));
 
-        return await _accountInfoRepository.UpdateAccountInfoAsync(updateRequest);
+        return await accountInfoRepository.UpdateAccountInfoAsync(updateRequest);
     }
 
     private async Task<AccountInfo> CreateDefaultUserAccount(Guid accountId, string password)
@@ -139,5 +132,23 @@ public class AccountManagementService : IAccountManagementService
             IsBlocked = false,
             Roles = new List<string>() { Roles.User, Roles.Guest },
         };
+    }
+
+
+    private UpdateModelRequest<AccountInfo> CreateUpdateModelRequest(
+        UpdateAccountInfoRequest request)
+    {
+        var isSuperAdmin = currentAccountAccessor.GetHighestRole() == Role.SuperAdmin;
+
+        var updateRequest = UpdateModelRequest<AccountInfo>
+            .Init(request.Id)
+            .SetIfNotNull(x => x.IsPhoneVerified, request.IsPhoneVerified)
+            .SetIfNotNull(x => x.IsEmailVerified, request.IsEmailVerified)
+            .SetIfNotNull(x => x.Roles, isSuperAdmin && request.Role.HasValue
+                ? RolesHelper.GetRolesList(request.Role.Value)
+                : null)
+            .SetIfNotNull(x => x.IsBlocked, request.IsBlocked);
+
+        return updateRequest;
     }
 }

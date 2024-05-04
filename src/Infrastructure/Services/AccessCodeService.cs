@@ -8,54 +8,59 @@ using Defender.IdentityService.Domain.Enum;
 
 namespace Defender.IdentityService.Infrastructure.Services;
 
-public class AccessCodeService : IAccessCodeService
+public class AccessCodeService(
+    IAccessCodeRepository accessCodeRepository) 
+    : IAccessCodeService
 {
-    private readonly IAccessCodeRepository _accessCodeRepository;
 
-    public AccessCodeService(
-        IAccessCodeRepository accessCodeRepository)
-    {
-        _accessCodeRepository = accessCodeRepository;
-    }
-
-    public async Task<AccessCode> CreateAccessCodeAsync(Guid accountId, AccessCodeType accessCodeType)
+    public async Task<AccessCode> CreateAccessCodeAsync(
+        Guid accountId,
+        AccessCodeType accessCodeType)
     {
         var accessCode = AccessCode.CreateAccessCode(accountId, accessCodeType);
 
-        return await _accessCodeRepository.CreateAccessCodeAsync(accessCode);
+        return await accessCodeRepository.CreateAccessCodeAsync(accessCode);
     }
 
-    public async Task<bool> VerifyAccessCode(Guid accountId, int code)
+    public async Task<bool> VerifyAccessCode(
+        Guid accountId,
+        int code,
+        AccessCodeType codeType)
     {
-        var accessCode = await _accessCodeRepository.GetAccessCodeByUserIdAsync(accountId, code);
+        var accessCode = await accessCodeRepository.GetAccessCodeByUserIdAsync(accountId, code);
 
-        return await VerifyAccessCode(accessCode);
+        return await VerifyAccessCode(accessCode, codeType);
     }
 
-    public async Task<(bool, Guid)> VerifyAccessCode(int hash, int code)
+    public async Task<(bool, Guid)> VerifyAccessCode(
+        int hash, 
+        int code,
+        AccessCodeType codeType)
     {
-        var accessCode = await _accessCodeRepository.GetAccessCodeByHashAsync(hash, code);
+        var accessCode = await accessCodeRepository.GetAccessCodeByHashAsync(hash, code);
 
-        var isVerified = await VerifyAccessCode(accessCode);
+        var isVerified = await VerifyAccessCode(accessCode, codeType);
 
         return (isVerified, accessCode.UserId);
     }
 
-    private async Task<bool> VerifyAccessCode(AccessCode accessCode)
+    private async Task<bool> VerifyAccessCode(AccessCode accessCode, AccessCodeType codeType)
     {
         if (accessCode == null)
             throw new NotFoundException(ErrorCode.BR_ACC_InvalidAccessCode);
+        if (accessCode.Type != codeType)
+            throw new NotFoundException(ErrorCode.BR_ACC_CodeTypeMismatch);
 
-        if (!await VerifyCode(accessCode))
+        if (!await CheckAndUpdateCodeStatusAsync(accessCode))
         {
-            ThrowException(accessCode.Status);
+            ThrowExceptionIfUsedOrExpired(accessCode.Status);
             return false;
         }
 
         return true;
     }
 
-    private async Task<bool> VerifyCode(AccessCode accessCode)
+    private async Task<bool> CheckAndUpdateCodeStatusAsync(AccessCode accessCode)
     {
         bool isVerified = false;
 
@@ -73,13 +78,13 @@ public class AccessCodeService : IAccessCodeService
                 isVerified = true;
             }
 
-            accessCode = await _accessCodeRepository.UpdateAccessCodeAsync(updateRequest);
+            accessCode = await accessCodeRepository.UpdateAccessCodeAsync(updateRequest);
         }
 
         return isVerified;
     }
 
-    private void ThrowException(AccessCodeStatus failedStatus)
+    private void ThrowExceptionIfUsedOrExpired(AccessCodeStatus failedStatus)
     {
         switch (failedStatus)
         {

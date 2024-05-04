@@ -1,6 +1,7 @@
 ﻿using Defender.Common.Errors;
 using Defender.Common.Interfaces;
 using Defender.IdentityService.Application.Common.Interfaces;
+using Defender.IdentityService.Domain.Enum;
 using FluentValidation;
 using MediatR;
 
@@ -9,6 +10,7 @@ namespace Defender.IdentityService.Application.Modules.Verification.Commands;
 public record VerifyCodeCommand : IRequest<bool>
 {
     public int Code { get; set; }
+    public AccessCodeType Type { get; set; } = AccessCodeType.Default;
 };
 
 public sealed class VerifyCodeCommandValidator : AbstractValidator<VerifyCodeCommand>
@@ -16,27 +18,21 @@ public sealed class VerifyCodeCommandValidator : AbstractValidator<VerifyCodeCom
     public VerifyCodeCommandValidator()
     {
         RuleFor(s => s.Code)
-                  .NotEmpty().WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_InvalidRequest));
+                  .NotEmpty()
+                  .WithMessage(ErrorCodeHelper.GetErrorCode(
+                      ErrorCode.VL_ACC_EmptyAccessCode));
     }
 }
 
-public sealed class VerifyCodeCommandHandler : IRequestHandler<VerifyCodeCommand, bool>
-{
-    private readonly ICurrentAccountAccessor _currentAccountAccessor;
-    private readonly IAccessCodeService _accessCodeService;
-
-    public VerifyCodeCommandHandler(
+public sealed class VerifyCodeCommandHandler(
         ICurrentAccountAccessor currentAccountAccessor,
-        IAccessCodeService accessCodeService)
-    {
-        _currentAccountAccessor = currentAccountAccessor;
-        _accessCodeService = accessCodeService;
-    }
-
+        IAccessCodeService accessCodeService) 
+    : IRequestHandler<VerifyCodeCommand, bool>
+{
     public async Task<bool> Handle(VerifyCodeCommand request, CancellationToken cancellationToken)
     {
-        var currentUserAccountId = _currentAccountAccessor.GetAccountId();
+        var currentUserAccountId = currentAccountAccessor.GetAccountId();
 
-        return await _accessCodeService.VerifyAccessCode(currentUserAccountId, request.Code);
+        return await accessCodeService.VerifyAccessCode(currentUserAccountId, request.Code, request.Type);
     }
 }

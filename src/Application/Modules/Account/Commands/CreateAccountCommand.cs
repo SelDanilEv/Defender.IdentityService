@@ -49,32 +49,15 @@ public sealed class CreateAccountCommandValidator : AbstractValidator<CreateAcco
     }
 }
 
-public sealed class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand, LoginResponse>
-{
-    private readonly IUserManagementService _userManagementService;
-    private readonly IAccountManagementService _accountManagementService;
-    private readonly ITokenManagementService _tokenManagementService;
-    private readonly INotificationService _notificationService;
-    private readonly IAccessCodeService _accessCodeService;
-    private readonly IMapper _mapper;
-
-    public CreateAccountCommandHandler(
+public sealed class CreateAccountCommandHandler(
         IUserManagementService userManagementService,
         IAccountManagementService accountManagementService,
         INotificationService notificationService,
         IAccessCodeService accessCodeService,
         ITokenManagementService tokenManagementService,
         IMapper mapper
-        )
-    {
-        _userManagementService = userManagementService;
-        _accountManagementService = accountManagementService;
-        _notificationService = notificationService;
-        _accessCodeService = accessCodeService;
-        _tokenManagementService = tokenManagementService;
-        _mapper = mapper;
-    }
-
+        ) : IRequestHandler<CreateAccountCommand, LoginResponse>
+{
     public async Task<LoginResponse> Handle(
         CreateAccountCommand request, 
         CancellationToken cancellationToken)
@@ -83,24 +66,24 @@ public sealed class CreateAccountCommandHandler : IRequestHandler<CreateAccountC
 
         request.PhoneNumber = request.PhoneNumber.DigitsOnly();
 
-        response.UserInfo = await _userManagementService.CreateUserAsync(
+        response.UserInfo = await userManagementService.CreateUserAsync(
             request.Email,
             request.PhoneNumber, 
             request.Nickname);
 
-        var accountInfo = await _accountManagementService.GetOrCreateAccountAsync(
+        var accountInfo = await accountManagementService.GetOrCreateAccountAsync(
             response.UserInfo.Id, 
             request.Password);
 
-        var accessCode = await _accessCodeService.CreateAccessCodeAsync(
+        var accessCode = await accessCodeService.CreateAccessCodeAsync(
             response.UserInfo.Id, 
             AccessCodeType.EmailVerification);
 
-        await _notificationService.SendVerificationCodeAsync(accessCode);
+        await notificationService.SendVerificationCodeAsync(accessCode);
 
-        response.AccountInfo = _mapper.Map<AccountDto>(accountInfo);
+        response.AccountInfo = mapper.Map<AccountDto>(accountInfo);
 
-        response.Token = await _tokenManagementService.GenerateNewJWTAsync(accountInfo);
+        response.Token = await tokenManagementService.GenerateNewJWTAsync(accountInfo);
 
         return response;
     }

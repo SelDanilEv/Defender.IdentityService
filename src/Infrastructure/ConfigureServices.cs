@@ -9,7 +9,6 @@ using Defender.IdentityService.Infrastructure.Clients.Google;
 using Defender.IdentityService.Infrastructure.Clients.Notification;
 using Defender.IdentityService.Infrastructure.Clients.UserManagement;
 using Defender.IdentityService.Infrastructure.Repositories;
-using Defender.IdentityService.Infrastructure.Repositories.AccountInfos;
 using Defender.IdentityService.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
