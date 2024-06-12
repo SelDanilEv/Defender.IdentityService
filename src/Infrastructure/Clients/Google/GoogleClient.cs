@@ -1,18 +1,12 @@
 ﻿using Defender.IdentityService.Application.Common.Exceptions;
+using Defender.IdentityService.Application.Common.Interfaces.Clients;
 using Defender.IdentityService.Application.Models.Google;
 using Newtonsoft.Json;
 
 namespace Defender.IdentityService.Infrastructure.Clients.Google;
 
-public partial class GoogleClient : IGoogleClient
+public partial class GoogleClient(HttpClient httpClient) : IGoogleClient
 {
-    private readonly HttpClient _httpClient;
-
-    public GoogleClient(HttpClient httpClient)
-    {
-        _httpClient = httpClient;
-    }
-
     public async Task<GoogleUser> GetTokenInfo(string token)
     {
         if (token == null)
@@ -29,7 +23,7 @@ public partial class GoogleClient : IGoogleClient
 
                 request.RequestUri = new Uri(url, UriKind.RelativeOrAbsolute);
 
-                var response = await _httpClient.SendAsync(request);
+                var response = await httpClient.SendAsync(request);
 
                 if ((int)response.StatusCode == 200)
                 {
@@ -51,7 +45,7 @@ public partial class GoogleClient : IGoogleClient
         }
         finally
         {
-            _httpClient.Dispose();
+            httpClient.Dispose();
         }
     }
 

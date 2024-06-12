@@ -3,6 +3,7 @@ using Defender.Common.Interfaces;
 using Defender.IdentityService.Application.Common.Interfaces;
 using Defender.IdentityService.Domain.Enum;
 using FluentValidation;
+using Defender.Common.Extension;
 using MediatR;
 
 namespace Defender.IdentityService.Application.Modules.Verification.Commands;
@@ -18,15 +19,14 @@ public sealed class VerifyCodeCommandValidator : AbstractValidator<VerifyCodeCom
     public VerifyCodeCommandValidator()
     {
         RuleFor(s => s.Code)
-                  .NotEmpty()
-                  .WithMessage(ErrorCodeHelper.GetErrorCode(
-                      ErrorCode.VL_ACC_EmptyAccessCode));
+            .NotEmpty()
+            .WithMessage(ErrorCode.VL_ACC_EmptyAccessCode);
     }
 }
 
 public sealed class VerifyCodeCommandHandler(
         ICurrentAccountAccessor currentAccountAccessor,
-        IAccessCodeService accessCodeService) 
+        IAccessCodeService accessCodeService)
     : IRequestHandler<VerifyCodeCommand, bool>
 {
     public async Task<bool> Handle(VerifyCodeCommand request, CancellationToken cancellationToken)

@@ -5,6 +5,7 @@ using Defender.Common.Interfaces;
 using Defender.IdentityService.Application.Common.Interfaces;
 using Defender.IdentityService.Domain.Enum;
 using FluentValidation;
+using Defender.Common.Extension;
 using MediatR;
 
 namespace Defender.IdentityService.Application.Modules.Account.Commands;
@@ -16,18 +17,18 @@ public record ChangeUserPasswordCommand : IRequest<Unit>
     public int? Code { get; set; }
 };
 
-public sealed class ChangeUserPasswordCommandValidator 
+public sealed class ChangeUserPasswordCommandValidator
     : AbstractValidator<ChangeUserPasswordCommand>
 {
     public ChangeUserPasswordCommandValidator()
     {
         RuleFor(p => p.NewPassword)
           .NotEmpty()
-          .WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_EmptyPassword))
+          .WithMessage(ErrorCode.VL_ACC_EmptyPassword)
           .MinimumLength(ValidationConstants.MinPasswordLength)
-          .WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_MinPasswordLength))
+          .WithMessage(ErrorCode.VL_ACC_MinPasswordLength)
           .MaximumLength(ValidationConstants.MaxPasswordLength)
-          .WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_MaxPasswordLength));
+          .WithMessage(ErrorCode.VL_ACC_MaxPasswordLength);
     }
 }
 
@@ -39,12 +40,12 @@ public sealed class ChangeUserPasswordCommandHandler(
         ) : IRequestHandler<ChangeUserPasswordCommand, Unit>
 {
     public async Task<Unit> Handle(
-        ChangeUserPasswordCommand request, 
+        ChangeUserPasswordCommand request,
         CancellationToken cancellationToken)
     {
         var accountId = request.AccountId ?? currentAccountAccessor.GetAccountId();
 
-        if(currentAccountAccessor.HasRole(Role.Admin))
+        if (currentAccountAccessor.HasRole(Role.Admin))
         {
             await authorizationCheckingService.ExecuteWithAuthCheckAsync(accountId,
                 async () =>

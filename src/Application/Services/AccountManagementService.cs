@@ -10,14 +10,13 @@ using Defender.IdentityService.Application.Common.Interfaces.Repositories;
 using Defender.IdentityService.Application.Models.ApiRequests;
 using Defender.IdentityService.Domain.Entities;
 using Defender.IdentityService.Domain.Enum;
-using Defender.IdentityService.Infrastructure.Helpers;
+using Defender.IdentityService.Application.Helpers;
 
-namespace Defender.IdentityService.Infrastructure.Services;
+namespace Defender.IdentityService.Application.Services;
 
 public class AccountManagementService(
         IAccessCodeService accessCodeService,
         IAccountInfoRepository accountInfoRepository,
-        IAuthorizationCheckingService authorizationCheckingService,
         ICurrentAccountAccessor currentAccountAccessor)
     : IAccountManagementService
 {

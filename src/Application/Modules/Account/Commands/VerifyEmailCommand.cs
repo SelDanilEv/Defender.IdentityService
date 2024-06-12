@@ -1,6 +1,7 @@
 ﻿using Defender.Common.Errors;
 using Defender.IdentityService.Application.Common.Interfaces;
 using FluentValidation;
+using Defender.Common.Extension;
 using MediatR;
 
 namespace Defender.IdentityService.Application.Modules.Account.Commands;
@@ -16,9 +17,12 @@ public sealed class VerifyEmailCommandValidator : AbstractValidator<VerifyEmailC
     public VerifyEmailCommandValidator()
     {
         RuleFor(s => s.Hash)
-                  .NotEmpty().WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_InvalidRequest));
+            .NotEmpty()
+            .WithMessage(ErrorCode.VL_InvalidRequest);
+
         RuleFor(s => s.Code)
-                  .NotEmpty().WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_InvalidRequest));
+            .NotEmpty()
+            .WithMessage(ErrorCode.VL_InvalidRequest);
     }
 }
 

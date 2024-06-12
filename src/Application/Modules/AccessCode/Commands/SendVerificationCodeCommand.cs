@@ -2,6 +2,7 @@
 using Defender.IdentityService.Application.Common.Interfaces;
 using Defender.IdentityService.Domain.Enum;
 using FluentValidation;
+using Defender.Common.Extension;
 using MediatR;
 
 namespace Defender.IdentityService.Application.Modules.Verification.Commands;
@@ -17,7 +18,8 @@ public sealed class SendVerificationCodeCommandValidator : AbstractValidator<Sen
     public SendVerificationCodeCommandValidator()
     {
         RuleFor(s => s.UserId)
-                  .NotEmpty().WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_EmptyUserId));
+            .NotEmpty()
+            .WithMessage(ErrorCode.VL_ACC_EmptyUserId);
     }
 }
 

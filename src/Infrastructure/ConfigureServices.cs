@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Defender.Common.Clients.Notification;
 using Defender.Common.Clients.UserManagement;
-using Defender.IdentityService.Application.Common.Interfaces;
+using Defender.IdentityService.Application.Common.Interfaces.Clients;
 using Defender.IdentityService.Application.Common.Interfaces.Repositories;
 using Defender.IdentityService.Application.Common.Interfaces.Wrapper;
 using Defender.IdentityService.Application.Configuration.Options;
@@ -9,7 +9,6 @@ using Defender.IdentityService.Infrastructure.Clients.Google;
 using Defender.IdentityService.Infrastructure.Clients.Notification;
 using Defender.IdentityService.Infrastructure.Clients.UserManagement;
 using Defender.IdentityService.Infrastructure.Repositories;
-using Defender.IdentityService.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -23,7 +22,6 @@ public static class ConfigureServices
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
         services
-            .RegisterServices()
             .RegisterRepositories()
             .RegisterApiClients(configuration)
             .RegisterClientWrappers();
@@ -35,19 +33,6 @@ public static class ConfigureServices
     {
         services.AddTransient<IUserManagementWrapper, UserManagementWrapper>();
         services.AddTransient<INotificationWrapper, NotificationWrapper>();
-
-        return services;
-    }
-
-    private static IServiceCollection RegisterServices(this IServiceCollection services)
-    {
-        services.AddTransient<INotificationService, NotificationService>();
-        services.AddTransient<IAccessCodeService, AccessCodeService>();
-        services.AddTransient<IAccountManagementService, AccountManagementService>();
-        services.AddTransient<ITokenManagementService, TokenManagementService>();
-        services.AddTransient<IGoogleTokenParsingService, GoogleTokenParsingService>();
-        services.AddTransient<ILoginHistoryService, LoginHistoryService>();
-        services.AddTransient<IUserManagementService, UserManagementService>();
 
         return services;
     }

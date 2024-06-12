@@ -5,6 +5,7 @@ using Defender.IdentityService.Application.Common.Interfaces;
 using Defender.IdentityService.Application.Models.ApiRequests;
 using Defender.IdentityService.Domain.Entities;
 using FluentValidation;
+using Defender.Common.Extension;
 using MediatR;
 
 namespace Defender.IdentityService.Application.Modules.Account.Commands;
@@ -30,15 +31,15 @@ public sealed class UpdateAccountCommandValidator : AbstractValidator<UpdateAcco
     public UpdateAccountCommandValidator()
     {
         RuleFor(s => s.Id)
-                  .NotEmpty()
-                    .WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_ACC_EmptyUserId));
+            .NotEmpty()
+            .WithMessage(ErrorCode.VL_ACC_EmptyUserId);
 
         RuleFor(p => p)
             .Must(p => p.IsPhoneVerified.HasValue
                 || p.IsEmailVerified.HasValue
                 || p.Role.HasValue
                 || p.IsBlocked.HasValue)
-            .WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_InvalidRequest));
+            .WithMessage(ErrorCode.VL_InvalidRequest);
     }
 }
 

@@ -1,9 +1,9 @@
 ﻿using Defender.Common.Enums;
 using Defender.Common.Helpers;
-using Defender.IdentityService.Infrastructure.Helpers.LocalSecretHelper;
+using Defender.IdentityService.Application.Helpers.LocalSecretHelper;
 using Defender.Utils;
 
-namespace Defender.IdentityService.Infrastructure.Helpers;
+namespace Defender.IdentityService.Application.Helpers;
 
 public class PasswordHelper
 {

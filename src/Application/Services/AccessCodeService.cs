@@ -6,10 +6,10 @@ using Defender.IdentityService.Application.Common.Interfaces.Repositories;
 using Defender.IdentityService.Domain.Entities;
 using Defender.IdentityService.Domain.Enum;
 
-namespace Defender.IdentityService.Infrastructure.Services;
+namespace Defender.IdentityService.Application.Services;
 
 public class AccessCodeService(
-    IAccessCodeRepository accessCodeRepository) 
+    IAccessCodeRepository accessCodeRepository)
     : IAccessCodeService
 {
 
@@ -33,7 +33,7 @@ public class AccessCodeService(
     }
 
     public async Task<(bool, Guid)> VerifyAccessCode(
-        int hash, 
+        int hash,
         int code,
         AccessCodeType codeType)
     {

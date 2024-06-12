@@ -12,7 +12,7 @@ public record SendPasswordResetCodeCommand : IRequest<Guid>
     public string? Email { get; set; }
 };
 
-public sealed class SendPasswordResetCodeCommandValidator 
+public sealed class SendPasswordResetCodeCommandValidator
     : AbstractValidator<SendPasswordResetCodeCommand>
 {
     public SendPasswordResetCodeCommandValidator()
@@ -27,7 +27,7 @@ public sealed class SendPasswordResetCodeCommandHandler(
         IAccessCodeService accessCodeService,
         INotificationService notificationService,
         IUserManagementService userManagementService
-        ) 
+        )
     : IRequestHandler<SendPasswordResetCodeCommand, Guid>
 {
     public async Task<Guid> Handle(
@@ -36,7 +36,7 @@ public sealed class SendPasswordResetCodeCommandHandler(
     {
         var userId = await userManagementService.GetUserIdByEmailAsync(request.Email);
 
-        if(userId == Guid.Empty)
+        if (userId == Guid.Empty)
         {
             throw new ServiceException(ErrorCode.CM_NotFound);
         }

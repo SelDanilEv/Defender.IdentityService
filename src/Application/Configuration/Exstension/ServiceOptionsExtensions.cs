@@ -1,9 +1,9 @@
-﻿using Defender.Common.Exstension;
+﻿using Defender.Common.Extension;
 using Defender.IdentityService.Application.Configuration.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Defender.IdentityService.Application.Configuration.Exstension;
+namespace Defender.IdentityService.Application.Configuration.Extension;
 
 public static class ServiceOptionsExtensions
 {

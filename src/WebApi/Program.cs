@@ -1,4 +1,4 @@
-using Defender.Common.Exstension;
+using Defender.Common.Extension;
 using Defender.IdentityService.Application;
 using Defender.IdentityService.Infrastructure;
 using Defender.IdentityService.WebApi;

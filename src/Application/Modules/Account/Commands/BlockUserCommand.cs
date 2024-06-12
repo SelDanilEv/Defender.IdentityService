@@ -2,6 +2,7 @@
 using Defender.Common.Interfaces;
 using Defender.IdentityService.Application.Common.Interfaces;
 using FluentValidation;
+using Defender.Common.Extension;
 using MediatR;
 
 namespace Defender.IdentityService.Application.Modules.Account.Commands;
@@ -17,7 +18,8 @@ public sealed class BlockUserCommandValidator : AbstractValidator<BlockUserComma
     public BlockUserCommandValidator()
     {
         RuleFor(s => s.AccountId)
-                  .NotEmpty().WithMessage(ErrorCodeHelper.GetErrorCode(ErrorCode.VL_InvalidRequest));
+            .NotEmpty()
+            .WithMessage(ErrorCode.VL_InvalidRequest);
     }
 }
 

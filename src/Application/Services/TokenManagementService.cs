@@ -8,21 +8,13 @@ using Defender.IdentityService.Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Defender.IdentityService.Infrastructure.Services;
+namespace Defender.IdentityService.Application.Services;
 
-public class TokenManagementService : ITokenManagementService
-{
-    private readonly IConfiguration _configuration;
-    private readonly ILoginHistoryService _loginHistoryService;
-
-    public TokenManagementService(
+public class TokenManagementService(
         IConfiguration configuration,
-        ILoginHistoryService loginHistoryService
-        )
-    {
-        _configuration = configuration;
-        _loginHistoryService = loginHistoryService;
-    }
+        ILoginHistoryService loginHistoryService) 
+    : ITokenManagementService
+{
 
     public async Task<string> GenerateNewJWTAsync(AccountInfo account)
     {
@@ -48,7 +40,7 @@ public class TokenManagementService : ITokenManagementService
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-          _configuration["JwtTokenIssuer"],
+          configuration["JwtTokenIssuer"],
           null,
           claims,
           expires: DateTime.Now.AddHours(3),
@@ -56,7 +48,7 @@ public class TokenManagementService : ITokenManagementService
 
         var tokenStr = new JwtSecurityTokenHandler().WriteToken(token);
 
-        await _loginHistoryService.AddLoginRecordAsync(new LoginRecord(account.Id, tokenStr));
+        await loginHistoryService.AddLoginRecordAsync(new LoginRecord(account.Id, tokenStr));
 
         return tokenStr;
     }
