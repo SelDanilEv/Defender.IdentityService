@@ -32,7 +32,7 @@ public class AccessCodeController : BaseApiController
     public async Task<Guid> SendPasswordResetAccessCodeAsync(
         [FromBody] SendPasswordResetCodeCommand command)
     {
-        return await ProcessApiCallAsync<SendPasswordResetCodeCommand,Guid>(command);
+        return await ProcessApiCallAsync<SendPasswordResetCodeCommand, Guid>(command);
     }
 
     [HttpPost("verify")]
