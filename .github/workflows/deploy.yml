@@ -20,21 +20,4 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: |
-          echo "Starting deployment... 1"
-          echo "Starting deployment... 2"
-          echo "Starting deployment... 3"
-          cd C:\Danil\MyApps\Apps\Defender.IdentityService\
-          git pull origin main
-          if [ $? -ne 0 ]; then
-            echo "Git pull failed"
-            exit 1
-          fi
-          echo "Code pulled successfully"
-          cd ../..
-          echo "Starting Docker build..."
-          docker-compose -f dev-core-docker-compose.yml -p dev up -d --build dev-identity-service
-          if [ $? -ne 0 ]; then
-            echo "Docker build failed"
-            exit 1
-          fi
-          echo "Deployment completed."
+          C:\Danil\MyApps\test.bat
