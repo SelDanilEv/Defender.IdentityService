@@ -20,4 +20,4 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: |
-          C:\Danil\MyApps\test.bat
+          C:\Danil\MyApps\github_deploy.bat Defender.IdentityService dev-identity-service
