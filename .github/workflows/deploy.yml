@@ -21,4 +21,4 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: |
-          ${{ env.DEPLOY_SCRIPT }} ${{ env.APP_DIR }} ${{ env.DOCKER_SERVICE }}
+          ${{ vars.DEPLOY_SCRIPT }} ${{ vars.APP_DIR }} ${{ vars.DOCKER_SERVICE }}
