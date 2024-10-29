@@ -20,6 +20,7 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: |
+          whoami
           echo "Starting deployment..."
           cd C:\Danil\MyApps\Apps\Defender.IdentityService\
           git pull origin main
