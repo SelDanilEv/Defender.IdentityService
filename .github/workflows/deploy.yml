@@ -8,7 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: DEV
+    environment: development
 
     steps:
     - name: Checkout code
@@ -21,4 +21,4 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: |
-          C:\Danil\MyApps\github_deploy.bat Defender.IdentityService dev-identity-service
+          ${{ env.DEPLOY_SCRIPT }} ${{ env.APP_DIR }} ${{ env.DOCKER_SERVICE }}
