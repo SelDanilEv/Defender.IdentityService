@@ -23,4 +23,4 @@ jobs:
           cd C:\Danil\MyApps\Apps\Defender.IdentityService\
           git pull origin main
           cd ../..
-          docker-compose -f dev-core-docker-compose.yml -p dev up -d --build dev-identity-service
+          docker-compose -f dev-core-docker-compose.yml -p dev up --build dev-identity-service
