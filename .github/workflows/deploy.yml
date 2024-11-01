@@ -30,7 +30,7 @@ jobs:
           context: ./src  # Set the context to the src folder
           dockerfile: src/Dockerfile
           push: true
-          tags: ${{ vars.IMAGE_NAME }}:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/${{ vars.IMAGE_NAME }}:latest
 
       - name: Log out of Docker Hub
         run: docker logout
