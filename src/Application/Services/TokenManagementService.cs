@@ -43,7 +43,7 @@ public class TokenManagementService(
           configuration["JwtTokenIssuer"],
           null,
           claims,
-          expires: DateTime.Now.AddHours(3),
+          expires: DateTime.Now.AddDays(30),
           signingCredentials: creds);
 
         var tokenStr = new JwtSecurityTokenHandler().WriteToken(token);
