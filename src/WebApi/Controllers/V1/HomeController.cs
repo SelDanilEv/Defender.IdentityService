@@ -1,14 +1,14 @@
-﻿using AutoMapper;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using Defender.Common.Attributes;
-using Defender.Common.Enums;
-using Microsoft.AspNetCore.Http;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using Defender.Common.DTOs;
-using Defender.Common.Modules.Home.Queries;
+using AutoMapper;
+using Defender.Common.Attributes;
 using Defender.Common.Consts;
+using Defender.Common.DTOs;
+using Defender.Common.Enums;
+using Defender.Common.Modules.Home.Queries;
+using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Defender.IdentityService.WebApi.Controllers.V1;
 

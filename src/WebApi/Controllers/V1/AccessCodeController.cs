@@ -1,12 +1,12 @@
-﻿using AutoMapper;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
+﻿using System;
 using System.Threading.Tasks;
+using AutoMapper;
 using Defender.Common.Attributes;
-using Defender.IdentityService.Application.Modules.Verification.Commands;
 using Defender.Common.Consts;
-using System;
+using Defender.IdentityService.Application.Modules.Verification.Commands;
+using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Defender.IdentityService.WebApi.Controllers.V1;
 

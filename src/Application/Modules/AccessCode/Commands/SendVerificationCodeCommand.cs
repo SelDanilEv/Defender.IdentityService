@@ -1,8 +1,8 @@
 ﻿using Defender.Common.Errors;
+using Defender.Common.Extension;
 using Defender.IdentityService.Application.Common.Interfaces;
 using Defender.IdentityService.Domain.Enum;
 using FluentValidation;
-using Defender.Common.Extension;
 using MediatR;
 
 namespace Defender.IdentityService.Application.Modules.Verification.Commands;

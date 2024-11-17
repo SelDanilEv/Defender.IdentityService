@@ -2,10 +2,10 @@
 using Defender.Common.DTOs;
 using Defender.Common.Errors;
 using Defender.Common.Exceptions;
+using Defender.Common.Extension;
 using Defender.IdentityService.Application.Common.Interfaces;
 using Defender.IdentityService.Application.Models.LoginResponse;
 using FluentValidation;
-using Defender.Common.Extension;
 using MediatR;
 
 namespace Defender.IdentityService.Application.Modules.Account.Commands;

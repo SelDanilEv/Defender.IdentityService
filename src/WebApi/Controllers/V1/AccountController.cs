@@ -1,14 +1,14 @@
-﻿using AutoMapper;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using AutoMapper;
+using Defender.Common.Attributes;
+using Defender.Common.Consts;
+using Defender.Common.DTOs;
 using Defender.IdentityService.Application.Models.LoginResponse;
 using Defender.IdentityService.Application.Modules.Account.Commands;
-using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
-using Defender.Common.Attributes;
-using Defender.Common.DTOs;
 using Defender.IdentityService.Application.Modules.Account.Queries;
-using Defender.Common.Consts;
+using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Defender.IdentityService.WebApi.Controllers.V1;
 

@@ -12,7 +12,7 @@ namespace Defender.IdentityService.Application.Services;
 
 public class TokenManagementService(
         IConfiguration configuration,
-        ILoginHistoryService loginHistoryService) 
+        ILoginHistoryService loginHistoryService)
     : ITokenManagementService
 {
 

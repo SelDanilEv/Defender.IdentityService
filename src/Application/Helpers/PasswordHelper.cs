@@ -1,6 +1,4 @@
-﻿using Defender.Common.Enums;
-using Defender.Common.Helpers;
-using Defender.IdentityService.Application.Helpers.LocalSecretHelper;
+﻿using Defender.IdentityService.Application.Helpers.LocalSecretHelper;
 using Defender.Utils;
 
 namespace Defender.IdentityService.Application.Helpers;

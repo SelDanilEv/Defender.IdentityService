@@ -38,7 +38,8 @@ public class AccessCodeRepository : BaseMongoRepository<AccessCode>, IAccessCode
             .Init(a => a.UserId, userId)
             .Sort(x => x.CreatedDate, SortType.Desc);
 
-        if(code.HasValue) {
+        if (code.HasValue)
+        {
             findRequest.And(x => x.Code, code.Value);
         }
 

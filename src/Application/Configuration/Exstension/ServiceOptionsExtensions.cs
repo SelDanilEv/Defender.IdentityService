@@ -1,5 +1,4 @@
-﻿using Defender.Common.Extension;
-using Defender.IdentityService.Application.Configuration.Options;
+﻿using Defender.IdentityService.Application.Configuration.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -7,10 +7,10 @@ using Defender.Common.Helpers;
 using Defender.Common.Interfaces;
 using Defender.IdentityService.Application.Common.Interfaces;
 using Defender.IdentityService.Application.Common.Interfaces.Repositories;
+using Defender.IdentityService.Application.Helpers;
 using Defender.IdentityService.Application.Models.ApiRequests;
 using Defender.IdentityService.Domain.Entities;
 using Defender.IdentityService.Domain.Enum;
-using Defender.IdentityService.Application.Helpers;
 
 namespace Defender.IdentityService.Application.Services;
 

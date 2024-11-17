@@ -11,7 +11,7 @@ public class NotificationService(
 {
     public async Task<string> SendVerificationCodeAsync(AccessCode accessCode, string? email = null)
     {
-        var userEmail = email ?? 
+        var userEmail = email ??
             (await userManagementService.GetUserByIdAsync(accessCode.UserId)).Email;
 
         return accessCode.Type switch

@@ -1,7 +1,7 @@
 ﻿using Defender.Common.Errors;
+using Defender.Common.Extension;
 using Defender.IdentityService.Application.Common.Interfaces;
 using FluentValidation;
-using Defender.Common.Extension;
 using MediatR;
 
 namespace Defender.IdentityService.Application.Modules.Account.Commands;

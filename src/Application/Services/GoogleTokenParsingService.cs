@@ -1,8 +1,8 @@
 ﻿using Defender.Common.Errors;
 using Defender.Common.Exceptions;
 using Defender.IdentityService.Application.Common.Interfaces;
-using Defender.IdentityService.Application.Models.Google;
 using Defender.IdentityService.Application.Common.Interfaces.Clients;
+using Defender.IdentityService.Application.Models.Google;
 
 namespace Defender.IdentityService.Application.Services;
 public class GoogleTokenParsingService(IGoogleClient googleClient) : IGoogleTokenParsingService

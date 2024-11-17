@@ -1,11 +1,11 @@
 ﻿using Defender.Common.Enums;
 using Defender.Common.Errors;
+using Defender.Common.Extension;
 using Defender.Common.Interfaces;
 using Defender.IdentityService.Application.Common.Interfaces;
 using Defender.IdentityService.Application.Models.ApiRequests;
 using Defender.IdentityService.Domain.Entities;
 using FluentValidation;
-using Defender.Common.Extension;
 using MediatR;
 
 namespace Defender.IdentityService.Application.Modules.Account.Commands;

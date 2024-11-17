@@ -5,7 +5,7 @@ using Defender.IdentityService.Domain.Entities;
 namespace Defender.IdentityService.Application.Services;
 
 public class LoginHistoryService(
-    ILoginRecordRepository loginRecordRepository) 
+    ILoginRecordRepository loginRecordRepository)
     : ILoginHistoryService
 {
     public async Task<LoginRecord> AddLoginRecordAsync(LoginRecord loginRecord)

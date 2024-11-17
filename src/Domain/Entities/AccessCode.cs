@@ -40,10 +40,10 @@ public class AccessCode : IBaseModel
         AccessCodeType accessCodeType = AccessCodeType.Default,
         int validTimeMinutes = Constants.AccessCodeDefaultValidTimeMinutes)
             => new AccessCode(userId)
-        {
-            ValidTime = TimeSpan.FromMinutes(validTimeMinutes),
-            Type = accessCodeType,
-        };
+            {
+                ValidTime = TimeSpan.FromMinutes(validTimeMinutes),
+                Type = accessCodeType,
+            };
 }
 
 
