@@ -1,8 +1,8 @@
 ﻿using Defender.Common.DB.Model;
 using Defender.Common.Errors;
 using Defender.Common.Exceptions;
-using Defender.IdentityService.Application.Common.Interfaces;
 using Defender.IdentityService.Application.Common.Interfaces.Repositories;
+using Defender.IdentityService.Application.Common.Interfaces.Services;
 using Defender.IdentityService.Domain.Entities;
 using Defender.IdentityService.Domain.Enum;
 

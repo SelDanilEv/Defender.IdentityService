@@ -1,5 +1,5 @@
-﻿using Defender.IdentityService.Application.Common.Interfaces;
-using Defender.IdentityService.Application.Common.Interfaces.Repositories;
+﻿using Defender.IdentityService.Application.Common.Interfaces.Repositories;
+using Defender.IdentityService.Application.Common.Interfaces.Services;
 using Defender.IdentityService.Domain.Entities;
 
 namespace Defender.IdentityService.Application.Services;

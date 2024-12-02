@@ -1,7 +1,7 @@
 ﻿using Defender.IdentityService.Application.Models.ApiRequests;
 using Defender.IdentityService.Domain.Entities;
 
-namespace Defender.IdentityService.Application.Common.Interfaces;
+namespace Defender.IdentityService.Application.Common.Interfaces.Services;
 
 public interface IAccountManagementService
 {

@@ -1,5 +1,5 @@
 ﻿namespace Defender.IdentityService.Domain.Consts;
-internal class Constants
+internal static class Constants
 {
     public const int AccessCodeMinValue = 100000;
     public const int AccessCodeMaxValue = 999999;

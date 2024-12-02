@@ -1,6 +1,6 @@
 ﻿using Defender.Common.DTOs;
 
-namespace Defender.IdentityService.Application.Common.Interfaces;
+namespace Defender.IdentityService.Application.Common.Interfaces.Services;
 
 public interface IUserManagementService
 {

@@ -1,7 +1,7 @@
 ﻿using Defender.Common.Errors;
 using Defender.Common.Extension;
 using Defender.Common.Interfaces;
-using Defender.IdentityService.Application.Common.Interfaces;
+using Defender.IdentityService.Application.Common.Interfaces.Services;
 using FluentValidation;
 using MediatR;
 

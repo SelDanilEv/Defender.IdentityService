@@ -1,11 +1,11 @@
 ﻿using Defender.Common.Errors;
 using Defender.Common.Extension;
-using Defender.IdentityService.Application.Common.Interfaces;
+using Defender.IdentityService.Application.Common.Interfaces.Services;
 using Defender.IdentityService.Domain.Enum;
 using FluentValidation;
 using MediatR;
 
-namespace Defender.IdentityService.Application.Modules.Verification.Commands;
+namespace Defender.IdentityService.Application.Modules.AccessCode.Commands;
 
 public record SendVerificationCodeCommand : IRequest<Unit>
 {

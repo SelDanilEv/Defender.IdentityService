@@ -10,7 +10,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Defender.IdentityService.WebApi.Controllers.V1;
+namespace WebApi.Controllers.V1;
 
 public partial class HomeController(
         IMediator mediator,

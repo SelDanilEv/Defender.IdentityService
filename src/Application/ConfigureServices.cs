@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using Defender.IdentityService.Application.Common.Interfaces;
+using Defender.IdentityService.Application.Common.Interfaces.Services;
 using Defender.IdentityService.Application.Services;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;

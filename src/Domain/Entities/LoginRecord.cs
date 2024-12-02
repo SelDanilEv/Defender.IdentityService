@@ -1,4 +1,5 @@
 ﻿using Defender.Common.Entities;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Defender.IdentityService.Domain.Entities;
@@ -17,7 +18,9 @@ public class LoginRecord : IBaseModel
     }
 
     [BsonId]
+    [BsonRepresentation(BsonType.String)]
     public Guid Id { get; set; }
+    [BsonGuidRepresentation(GuidRepresentation.CSharpLegacy)]
     public Guid UserId { get; set; }
     public string? JwtToken { get; set; }
     public DateTime? LoginDate { get; set; }

@@ -1,5 +1,5 @@
 ﻿using Defender.Common.Interfaces;
-using Defender.IdentityService.Application.Common.Interfaces;
+using Defender.IdentityService.Application.Common.Interfaces.Services;
 using Defender.IdentityService.Domain.Entities;
 using MediatR;
 

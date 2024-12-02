@@ -1,9 +1,8 @@
-﻿using Defender.Common.Entities;
-using Defender.Common.Entities.AccountInfo;
+﻿using Defender.Common.Entities.AccountInfo;
 
 namespace Defender.IdentityService.Domain.Entities;
 
-public record AccountInfo : BaseAccountInfo, IBaseModel
+public record AccountInfo : BaseAccountInfo
 {
     public string? PasswordHash { get; set; }
     public bool IsPhoneVerified { get; set; }

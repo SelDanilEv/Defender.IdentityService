@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Text;
 using System.Text.Json.Serialization;
+using Defender.Common.Enums;
 using Defender.Common.Errors;
 using Defender.Common.Exceptions;
 using Defender.Common.Extension;
@@ -19,7 +20,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 
-namespace Defender.IdentityService.WebApi;
+namespace WebApi;
 
 public static class ConfigureServices
 {
@@ -68,7 +69,7 @@ public static class ConfigureServices
                 ValidIssuer = configuration["JwtTokenIssuer"],
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(SecretsHelper.GetSecretAsync(Common.Enums.Secret.JwtSecret).Result))
+                    Encoding.UTF8.GetBytes(SecretsHelper.GetSecretAsync(Secret.JwtSecret).Result))
             };
         });
 

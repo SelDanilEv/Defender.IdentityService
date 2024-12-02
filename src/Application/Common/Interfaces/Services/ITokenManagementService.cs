@@ -1,6 +1,6 @@
 ﻿using Defender.IdentityService.Domain.Entities;
 
-namespace Defender.IdentityService.Application.Common.Interfaces;
+namespace Defender.IdentityService.Application.Common.Interfaces.Services;
 
 public interface ITokenManagementService
 {

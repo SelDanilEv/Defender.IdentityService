@@ -3,12 +3,12 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Defender.Common.Attributes;
 using Defender.Common.Consts;
-using Defender.IdentityService.Application.Modules.Verification.Commands;
+using Defender.IdentityService.Application.Modules.AccessCode.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Defender.IdentityService.WebApi.Controllers.V1;
+namespace WebApi.Controllers.V1;
 
 public class AccessCodeController : BaseApiController
 {

@@ -3,7 +3,7 @@ using Defender.Common.DTOs;
 using Defender.Common.Errors;
 using Defender.Common.Exceptions;
 using Defender.Common.Extension;
-using Defender.IdentityService.Application.Common.Interfaces;
+using Defender.IdentityService.Application.Common.Interfaces.Services;
 using Defender.IdentityService.Application.Models.LoginResponse;
 using FluentValidation;
 using MediatR;
@@ -62,7 +62,8 @@ public sealed class LoginWithPasswordCommandHandler(
 
         response.AccountInfo = mapper.Map<AccountDto>(accountInfo);
 
-        response.Token = await tokenManagementService.GenerateNewJWTAsync(accountInfo);
+        response.Token = await tokenManagementService
+            .GenerateNewJWTAsync(accountInfo);
 
         return response;
     }

@@ -9,8 +9,10 @@ namespace Defender.IdentityService.Domain.Entities;
 public class AccessCode : IBaseModel
 {
     [BsonId]
+    [BsonRepresentation(BsonType.String)]
     public Guid Id { get; set; }
 
+    [BsonGuidRepresentation(GuidRepresentation.CSharpLegacy)]
     public Guid UserId { get; set; }
     public int Hash { get; set; }
     public int Code { get; set; } = new Random().Next(Constants.AccessCodeMinValue, Constants.AccessCodeMaxValue);

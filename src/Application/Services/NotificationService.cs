@@ -1,4 +1,4 @@
-﻿using Defender.IdentityService.Application.Common.Interfaces;
+﻿using Defender.IdentityService.Application.Common.Interfaces.Services;
 using Defender.IdentityService.Application.Common.Interfaces.Wrapper;
 using Defender.IdentityService.Domain.Entities;
 using Defender.IdentityService.Domain.Enum;

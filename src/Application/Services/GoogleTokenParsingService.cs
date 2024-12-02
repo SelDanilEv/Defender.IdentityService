@@ -1,7 +1,7 @@
 ﻿using Defender.Common.Errors;
 using Defender.Common.Exceptions;
-using Defender.IdentityService.Application.Common.Interfaces;
 using Defender.IdentityService.Application.Common.Interfaces.Clients;
+using Defender.IdentityService.Application.Common.Interfaces.Services;
 using Defender.IdentityService.Application.Models.Google;
 
 namespace Defender.IdentityService.Application.Services;

@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Defender.Common.Enums;
 using Defender.Common.Helpers;
-using Defender.IdentityService.Application.Common.Interfaces;
+using Defender.IdentityService.Application.Common.Interfaces.Services;
 using Defender.IdentityService.Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;

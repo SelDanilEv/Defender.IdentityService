@@ -1,13 +1,13 @@
 using Defender.Common.Extension;
 using Defender.IdentityService.Application;
 using Defender.IdentityService.Infrastructure;
-using Defender.IdentityService.WebApi;
 using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using WebApi;
 
 var builder = WebApplication.CreateBuilder(args);
 

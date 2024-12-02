@@ -1,7 +1,7 @@
 ﻿using Defender.IdentityService.Domain.Entities;
 using Defender.IdentityService.Domain.Enum;
 
-namespace Defender.IdentityService.Application.Common.Interfaces;
+namespace Defender.IdentityService.Application.Common.Interfaces.Services;
 
 public interface IAccessCodeService
 {
