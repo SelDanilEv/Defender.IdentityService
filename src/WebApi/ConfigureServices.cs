@@ -18,13 +18,17 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-
+using ClaimTypes = Defender.Common.Consts.ClaimTypes;
 
 namespace WebApi;
 
 public static class ConfigureServices
 {
-    public static IServiceCollection AddWebApiServices(this IServiceCollection services, IWebHostEnvironment environment, IConfiguration configuration)
+    public static IServiceCollection AddWebApiServices(
+        this IServiceCollection services,
+        IWebHostEnvironment environment,
+        IConfiguration configuration
+    )
     {
         services.AddCommonServices(configuration);
 
@@ -40,38 +44,51 @@ public static class ConfigureServices
 
         services.AddFluentValidationAutoValidation();
 
-        services.AddControllers().AddJsonOptions(x =>
-        {
-            x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-            x.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-        });
+        services
+            .AddControllers()
+            .AddJsonOptions(x =>
+            {
+                x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                x.JsonSerializerOptions.DefaultIgnoreCondition =
+                    JsonIgnoreCondition.WhenWritingNull;
+            });
 
         services.Configure<ApiBehaviorOptions>(options =>
-            options.SuppressModelStateInvalidFilter = true);
+            options.SuppressModelStateInvalidFilter = true
+        );
 
         return services;
     }
 
-    private static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddJwtAuthentication(
+        this IServiceCollection services,
+        IConfiguration configuration
+    )
     {
-        services.AddAuthentication(auth =>
-        {
-            auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(options =>
-        {
-            options.RequireHttpsMetadata = false;
-            options.SaveToken = true;
-            options.TokenValidationParameters = new TokenValidationParameters()
+        services
+            .AddAuthentication(auth =>
             {
-                ValidateIssuer = true,
-                ValidateAudience = false,
-                ValidIssuer = configuration["JwtTokenIssuer"],
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(SecretsHelper.GetSecretAsync(Secret.JwtSecret).Result))
-            };
-        });
+                auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    NameClaimType = ClaimTypes.NameIdentifier,
+                    ValidateIssuer = true,
+                    ValidateAudience = false,
+                    ValidIssuer = configuration["JwtTokenIssuer"],
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(
+                            SecretsHelper.GetSecretAsync(Secret.JwtSecret).Result
+                        )
+                    ),
+                };
+            });
 
         return services;
     }
@@ -82,43 +99,56 @@ public static class ConfigureServices
         {
             options.UseInlineDefinitionsForEnums();
 
-            options.SwaggerDoc("v1", new OpenApiInfo
-            {
-                Version = "v1",
-                Title = "Identity Service",
-                Description = "Service to manage generate jwt token and manage accounts authorization info",
-            });
-
-            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
-            {
-                Name = "Authorization",
-                Type = SecuritySchemeType.Http,
-                Scheme = "Bearer",
-                BearerFormat = "JWT",
-                In = ParameterLocation.Header,
-                Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter your token in the text input below.\r\n\r\nExample: \"1sample\"",
-            });
-
-            options.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
+            options.SwaggerDoc(
+                "v1",
+                new OpenApiInfo
                 {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    new string[] {}
+                    Version = "v1",
+                    Title = "Identity Service",
+                    Description =
+                        "Service to manage generate jwt token and manage accounts authorization info",
                 }
-            });
+            );
+
+            options.AddSecurityDefinition(
+                "Bearer",
+                new OpenApiSecurityScheme()
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description =
+                        "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter your token in the text input below.\r\n\r\nExample: \"1sample\"",
+                }
+            );
+
+            options.AddSecurityRequirement(
+                new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer",
+                            },
+                        },
+                        []
+                    },
+                }
+            );
         });
 
         return services;
     }
 
-    private static void ConfigureProblemDetails(Hellang.Middleware.ProblemDetails.ProblemDetailsOptions options, IWebHostEnvironment environment)
+    private static void ConfigureProblemDetails(
+        Hellang.Middleware.ProblemDetails.ProblemDetailsOptions options,
+        IWebHostEnvironment environment
+    )
     {
         options.IncludeExceptionDetails = (ctx, ex) => environment.IsLocalOrDevelopment();
 
@@ -158,5 +188,4 @@ public static class ConfigureServices
             return problemDetails;
         });
     }
-
 }
